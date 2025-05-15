@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SPK AHP-PM-TOPSIS</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .pairwise-row input { width: 100px; text-align: center; }
+  </style>
+</head>
+<body class="p-4">
+<div class="container">
+  <h2>SPK AHP - Profile Matching - TOPSIS</h2>
+
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <label>Jumlah Kriteria</label>
+      <input type="number" id="numCriteria" class="form-control" value="3" min="2">
+    </div>
+    <div class="col-md-6">
+      <label>Jumlah Alternatif</label>
+      <input type="number" id="numAlternatives" class="form-control" value="2" min="2">
+    </div>
+  </div>
+
+  <button onclick="generateForm()" class="btn btn-primary mb-4">Buat Form</button>
+
+  <form method="POST" id="spk-form" style="display:none;">
+    <div id="form-area"></div>
+    <button type="submit" class="btn btn-success mt-3">Proses SPK</button>
+  </form>
+</div>
+
+<script>
+  function generateForm() {
+    const numC = parseInt(document.getElementById('numCriteria').value);
+    const numA = parseInt(document.getElementById('numAlternatives').value);
+    const formArea = document.getElementById('form-area');
+    formArea.innerHTML = '';
+
+    // Kriteria
+    formArea.innerHTML += `<h4>Kriteria</h4>`;
+    for (let i = 0; i < numC; i++) {
+      formArea.innerHTML += `<input type="text" name="criteria[]" class="form-control mb-2" placeholder="Kriteria ${i+1}">`;
+    }
+
+    // Pairwise Matrix
+    formArea.innerHTML += `<h4 class="mt-4">Pairwise Matrix</h4><p class="text-muted">Isi perbandingan antar kriteria. Input satu sisi, sisi lainnya akan terisi otomatis (1/nilai).</p>`;
+    let table = `<table class="table table-bordered"><thead><tr><th></th>`;
+    for (let i = 0; i < numC; i++) {
+      table += `<th>K${i+1}</th>`;
+    }
+    table += `</tr></thead><tbody>`;
+    for (let i = 0; i < numC; i++) {
+      table += `<tr><td>K${i + 1}</td>`;
+      for (let j = 0; j < numC; j++) {
+        const fieldId = `pairwise_${i}_${j}`;
+        if (i === j) {
+          table += `<td><input type="number" name="${fieldId}" id="${fieldId}" class="form-control text-center" value="1" readonly></td>`;
+        } else {
+          table += `<td><input type="number" step="any" min="0.01" name="${fieldId}" id="${fieldId}" class="form-control text-center" oninput="syncBoth(${i}, ${j}, this.value)"></td>`;
+        }
+      }
+      table += `</tr>`;
+    }
+    table += `</tbody></table>`;
+    formArea.innerHTML += table;
+
+    // Impact
+    formArea.innerHTML += `<h4 class="mt-4">Impact Kriteria</h4>`;
+    for (let i = 0; i < numC; i++) {
+      formArea.innerHTML += `
+        <select name="impact[]" class="form-select mb-2">
+          <option value="+">Benefit</option>
+          <option value="-">Cost</option>
+        </select>`;
+    }
+
+    // Profil Ideal
+    formArea.innerHTML += `<h4 class="mt-4">Profil Ideal</h4>`;
+    for (let i = 0; i < numC; i++) {
+      formArea.innerHTML += `<input type="number" name="profile[]" class="form-control mb-2" placeholder="Nilai Ideal Kriteria ${i+1}">`;
+    }
+
+    // Alternatif
+    formArea.innerHTML += `<h4 class="mt-4">Alternatif</h4>`;
+    for (let i = 0; i < numA; i++) {
+      formArea.innerHTML += `<input type="text" name="alt_name[]" class="form-control mb-2" placeholder="Nama Alternatif ${i+1}">`;
+      for (let j = 0; j < numC; j++) {
+        formArea.innerHTML += `<input type="number" step="any" name="alt_${i}[]" class="form-control mb-2" placeholder="Nilai K${j+1}">`;
+      }
+    }
+
+    document.getElementById('spk-form').style.display = 'block';
+  }
+
+  function syncBoth(i, j, value) {
+    const reciprocalInput = document.getElementById(`pairwise_${j}_${i}`);
+    const val = parseFloat(value);
+    if (!isNaN(val) && val !== 0) {
+      reciprocalInput.value = (1 / val).toFixed(5);
+    } else {
+      reciprocalInput.value = '';
+    }
+  }
+</script>
+
+</body>
+</html>
