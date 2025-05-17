@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>1. Kriteria, Impact, dan Profil Ideal</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { background-color: #f8f9fa; }
+    .card { border: none; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    .form-floating > .form-control, .form-floating > .form-select { border-radius: .5rem; }
+    .step-header { font-weight: 600; letter-spacing: .5px; }
+  </style>
+</head>
+<body class="py-5">
+  <div class="container">
+    <div class="card p-4 mb-5">
+      <h2 class="step-header mb-4">Kriteria, Impact, dan Profil Ideal</h2>
+      <form method="POST" id="criteriaForm">
+        <div class="row g-3" id="criteriaContainer">
+          {% for i in range(3) %}
+          <div class="col-12 criteria-item" data-index="{{i}}">
+            <div class="row gx-2 gy-3 align-items-end">
+              <div class="col-md-5">
+                <div class="form-floating">
+                  <input name="criteria[]" type="text" class="form-control" id="crit{{i}}" placeholder="Nama Kriteria" required>
+                  <label for="crit{{i}}">Nama Kriteria</label>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="form-floating">
+                  <select name="impact[]" class="form-select" id="impact{{i}}">
+                    <option value="+" selected>Benefit</option>
+                    <option value="-">Cost</option>
+                  </select>
+                  <label for="impact{{i}}">Impact</label>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div class="form-floating">
+                  <input name="profile[]" type="number" step="any" class="form-control" id="profile{{i}}" placeholder="Profil Ideal" required>
+                  <label for="profile{{i}}">Profil Ideal</label>
+                </div>
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="d-flex justify-content-between align-items-center mt-4">
+          <div>
+            <button type="button" class="btn btn-outline-primary me-2" id="addCriteriaBtn">+ Tambah Kriteria</button>
+            <button type="button" class="btn btn-outline-danger" id="removeCriteriaBtn">− Kurangi Kriteria</button>
+          </div>
+          <button type="submit" class="btn btn-lg btn-primary rounded-pill px-5">
+            Lanjut ke Pairwise
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<script>
+  const container = document.getElementById('criteriaContainer');
+  const addBtn = document.getElementById('addCriteriaBtn');
+  const removeBtn = document.getElementById('removeCriteriaBtn');
+
+  function updateRemoveBtnState() {
+    const count = container.querySelectorAll('.criteria-item').length;
+    removeBtn.disabled = count <= 1;  // minimal 1 kriteria harus ada
+  }
+
+  addBtn.addEventListener('click', () => {
+    const currentCount = container.querySelectorAll('.criteria-item').length;
+    const newIndex = currentCount;
+
+    const newDiv = document.createElement('div');
+    newDiv.classList.add('col-12', 'criteria-item');
+    newDiv.setAttribute('data-index', newIndex);
+    newDiv.innerHTML = `
+      <div class="row gx-2 gy-3 align-items-end">
+        <div class="col-md-5">
+          <div class="form-floating">
+            <input name="criteria[]" type="text" class="form-control" id="crit${newIndex}" placeholder="Nama Kriteria" required>
+            <label for="crit${newIndex}">Nama Kriteria</label>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="form-floating">
+            <select name="impact[]" class="form-select" id="impact${newIndex}">
+              <option value="+" selected>Benefit</option>
+              <option value="-">Cost</option>
+            </select>
+            <label for="impact${newIndex}">Impact</label>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-floating">
+            <input name="profile[]" type="number" step="any" class="form-control" id="profile${newIndex}" placeholder="Profil Ideal" required>
+            <label for="profile${newIndex}">Profil Ideal</label>
+          </div>
+        </div>
+      </div>
+    `;
+    container.appendChild(newDiv);
+    updateRemoveBtnState();
+  });
+
+  removeBtn.addEventListener('click', () => {
+    const criteriaItems = container.querySelectorAll('.criteria-item');
+    if (criteriaItems.length > 1) {
+      container.removeChild(criteriaItems[criteriaItems.length - 1]);
+      updateRemoveBtnState();
+    }
+  });
+
+  updateRemoveBtnState();
+</script>
+
+</body>
+</html>

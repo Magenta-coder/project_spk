@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>3. Data Alternatif</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f8f9fa; }
+    .card {
+      border-radius: 1rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .card-header {
+      font-weight: 700;
+      font-size: 1.25rem;
+      background-color: #ffffff;
+      border-bottom: 1px solid #dee2e6;
+      border-radius: 1rem 1rem 0 0;
+    }
+    input.form-control {
+      border-radius: 0.5rem;
+      height: 3rem;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0 0.75rem;
+    }
+    h2 {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body class="py-5">
+  <div class="container">
+    <h2>Data Alternatif</h2>
+    <div class="mb-3 d-flex gap-2">
+      <button type="button" class="btn btn-outline-primary" id="addAltBtn">+ Tambah Alternatif</button>
+      <button type="button" class="btn btn-outline-danger" id="removeAltBtn">− Kurangi Alternatif</button>
+    </div>
+    <form method="POST" novalidate id="altForm">
+      <div id="altContainer">
+        {% for i in range(3) %}
+        <div class="card mb-4 alt-item" data-index="{{ i }}">
+          <div class="card-header">Alternatif {{ i + 1 }}</div>
+          <div class="card-body">
+            <input
+              name="alt_name[]"
+              class="form-control mb-3"
+              placeholder="Nama Rumah Sakit"
+              required
+              aria-label="Nama Rumah Sakit Alternatif {{ i + 1 }}"
+            />
+            {% for k in criteria %}
+            <input
+              name="alt_{{ i }}[]"
+              type="number"
+              step="any"
+              class="form-control mb-3"
+              placeholder="Nilai {{ k }}"
+              required
+              aria-label="Nilai {{ k }} Alternatif {{ i + 1 }}"
+            />
+            {% endfor %}
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+      <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-lg btn-success rounded-pill px-5">
+          Proses dan Tampilkan Hasil
+        </button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    const altContainer = document.getElementById('altContainer');
+    const addAltBtn = document.getElementById('addAltBtn');
+    const removeAltBtn = document.getElementById('removeAltBtn');
+    const criteria = {{ criteria|tojson|safe }};
+
+    function updateRemoveBtnState() {
+      const count = altContainer.querySelectorAll('.alt-item').length;
+      removeAltBtn.disabled = count <= 1;
+    }
+
+    function createAltCard(index) {
+      const div = document.createElement('div');
+      div.classList.add('card', 'mb-4', 'alt-item');
+      div.setAttribute('data-index', index);
+
+      let inputsHTML = `
+        <div class="card-header">Alternatif ${index + 1}</div>
+        <div class="card-body">
+          <input
+            name="alt_name[]"
+            class="form-control mb-3"
+            placeholder="Nama Rumah Sakit"
+            required
+            aria-label="Nama Rumah Sakit Alternatif ${index + 1}"
+          />
+      `;
+
+      for (const k of criteria) {
+        inputsHTML += `
+          <input
+            name="alt_${index}[]"
+            type="number"
+            step="any"
+            class="form-control mb-3"
+            placeholder="Nilai ${k}"
+            required
+            aria-label="Nilai ${k} Alternatif ${index + 1}"
+          />
+        `;
+      }
+
+      inputsHTML += '</div>';
+      div.innerHTML = inputsHTML;
+      return div;
+    }
+
+    addAltBtn.addEventListener('click', () => {
+      const currentCount = altContainer.querySelectorAll('.alt-item').length;
+      const newCard = createAltCard(currentCount);
+      altContainer.appendChild(newCard);
+      updateRemoveBtnState();
+    });
+
+    removeAltBtn.addEventListener('click', () => {
+      const cards = altContainer.querySelectorAll('.alt-item');
+      if (cards.length > 1) {
+        altContainer.removeChild(cards[cards.length - 1]);
+        updateRemoveBtnState();
+      }
+    });
+
+    updateRemoveBtnState();
+  </script>
+</body>
+</html>

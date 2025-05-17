@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>2. Pairwise Comparison Matrix</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f8f9fa; }
+    .card { border: none; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
+    table { table-layout: fixed; }
+    th, td { text-align: center; vertical-align: middle; }
+    input.form-control {
+      border-radius: 0.5rem;
+      height: 3rem;
+      font-weight: 600;
+      font-size: 1rem;
+      padding: 0 0.75rem;
+      text-align: center;
+    }
+    .step-header {
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+    }
+  </style>
+</head>
+<body class="py-5">
+  <div class="container">
+    <div class="card p-4 mb-5">
+      <h2 class="step-header">Pairwise Comparison Matrix</h2>
+      <form method="POST" novalidate>
+        <div class="table-responsive">
+          <table class="table table-bordered align-middle">
+            <thead class="table-light">
+              <tr>
+                <th style="width: 5%"></th>
+                {% for i in range(criteria|length) %}
+                  <th style="width: {{ 95 / (criteria|length) }}%;">K{{ i + 1 }}</th>
+                {% endfor %}
+              </tr>
+            </thead>
+            <tbody>
+              {% for i in range(criteria|length) %}
+              <tr>
+                <th class="fw-semibold">K{{ i + 1 }}</th>
+                {% for j in range(criteria|length) %}
+                <td>
+                  {% if i == j %}
+                    <input
+                      name="pairwise_{{i}}_{{j}}"
+                      class="form-control"
+                      value="1"
+                      readonly
+                      data-i="{{i}}"
+                      data-j="{{j}}"
+                      aria-label="Pairwise comparison K{{i+1}} K{{j+1}}"
+                    />
+                  {% else %}
+                    <input
+                      name="pairwise_{{i}}_{{j}}"
+                      type="number"
+                      step="any"
+                      min="0.01"
+                      required
+                      class="form-control"
+                      oninput="syncBoth(this)"
+                      data-i="{{i}}"
+                      data-j="{{j}}"
+                      placeholder="Masukkan nilai"
+                      aria-label="Pairwise comparison K{{i+1}} K{{j+1}}"
+                    />
+                  {% endif %}
+                </td>
+                {% endfor %}
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+        <div class="text-end mt-4">
+          <button type="submit" class="btn btn-lg btn-primary rounded-pill px-5">
+            Lanjut ke Alternatif
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function syncBoth(input) {
+      const i = input.getAttribute('data-i');
+      const j = input.getAttribute('data-j');
+      const val = parseFloat(input.value);
+      if (!isNaN(val) && val !== 0) {
+        const pairInput = document.querySelector(`input[data-i="${j}"][data-j="${i}"]`);
+        if (pairInput && pairInput.value !== (1 / val).toFixed(5)) {
+          pairInput.value = (1 / val).toFixed(5);
+        }
+      } else {
+        const pairInput = document.querySelector(`input[data-i="${j}"][data-j="${i}"]`);
+        if (pairInput) {
+          pairInput.value = '';
+        }
+      }
+    }
+  </script>
+</body>
+</html>
