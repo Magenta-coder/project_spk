@@ -123,5 +123,5 @@ def hasil():
 
     return render_template('hasil.html', tables=[results.to_html(classes='table table-bordered')])
 
-if __name__ == '__main__':
-    app.run(debug=True)
+# if __name__ == '__main__':
+#     app.run(debug=True)
