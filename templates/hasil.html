@@ -255,7 +255,7 @@
       <!-- Best Result Section -->
       {% if tables %}
         {% set results_html = tables[0] %}
-        {% set table_start = results_html.find('<tbody>') + 7 %}
+        {% set table_start = results_html.find('</tbody>') + 7 %}
         {% set first_row_end = results_html.find('</tr>', table_start) + 5 %}
         {% set first_row = results_html[table_start:first_row_end] %}
 
