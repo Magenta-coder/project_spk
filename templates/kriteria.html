@@ -1,119 +1,630 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Kriteria, Impact, dan Profil Ideal</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Kriteria - Sistem SPK Rumah Sakit</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body { background-color: #f8f9fa; }
-    .card { border: none; border-radius: 1rem; box-shadow: 0 4px 12px rgba(0,0,0,0.05); }
-    .form-floating > .form-control, .form-floating > .form-select { border-radius: .5rem; }
-    .step-header { font-weight: 600; letter-spacing: .5px; }
+    :root {
+      /* Color palette - consistent with splash.html for branding */
+      --primary-blue: #29abe2;
+      --light-blue-gradient-start: #f0f8ff;
+      --light-blue-gradient-end: #e6f7ff;
+      --dark-blue-gradient-start: #1c86ba;
+      --dark-blue-gradient-end: #3eb4fa;
+      --success-green: #5cb85c;
+      --success-green-hover: #4cae4c;
+      --text-dark: #495057;
+      --text-light: white;
+      --card-bg: #ffffff;
+      --shadow-light: 0 5px 20px rgba(0, 0, 0, 0.08);
+      --shadow-deep: 0 15px 40px rgba(0, 0, 0, 0.2);
+      --border-radius-sm: 0.5rem;
+      --border-radius-md: 1rem;
+      --border-radius-lg: 1.5rem;
+      --transition-speed: 0.3s ease-in-out;
+
+      /* Specific for header/footer */
+      --header-footer-bg: var(--primary-blue);
+      --header-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+      /* Error specific colors */
+      --error-bg: #ffebeb;
+      --error-border: #ffcccb;
+      --error-text: #b00020;
+    }
+
+    html, body {
+      height: 100%; /* Important for sticky footer */
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--light-blue-gradient-start), var(--light-blue-gradient-end));
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column; /* Organize content vertically */
+      align-items: stretch; /* Stretch items to fill width */
+    }
+
+    /* --- Header Styles --- */
+    .header {
+      background-color: var(--header-footer-bg);
+      color: var(--text-light);
+      padding: 1rem 0; /* Increased padding */
+      box-shadow: var(--header-shadow);
+      position: sticky; /* Make header sticky */
+      top: 0;
+      z-index: 1020; /* Ensure it stays above other content */
+    }
+
+    .header .navbar-brand {
+      display: flex;
+      align-items: center;
+      color: var(--text-light);
+      font-size: 1.75rem; /* Larger font size for brand */
+      font-weight: 700;
+      text-decoration: none;
+      transition: color var(--transition-speed);
+    }
+
+    .header .navbar-brand:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .header .logo {
+      height: 35px; /* Slightly smaller logo in header */
+      margin-right: 12px; /* Space between logo and text */
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); /* Subtle glow for logo */
+    }
+
+    /* --- Main Content Area --- */
+    .main-content {
+      flex: 1; /* Allows main content to take up available space, pushing footer down */
+      padding-top: 2rem; /* Padding for content below header */
+      padding-bottom: 2rem; /* Padding above footer */
+    }
+
+    .container {
+      width: 100%; /* Ensure container fills available width */
+      max-width: 960px; /* Max width for content readability */
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    h2 {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+      color: var(--primary-blue);
+      text-align: center; /* Center the main heading */
+    }
+
+    /* --- Card & Form Styles --- */
+    .card {
+      border-radius: var(--border-radius-md); /* Consistent border-radius */
+      box-shadow: var(--shadow-light); /* Lighter shadow for content cards */
+      border: none;
+      background-color: var(--card-bg);
+      overflow: hidden; /* Ensures border-radius applies to children */
+    }
+
+    .card-header {
+      font-weight: 700;
+      font-size: 1.2rem; /* Slightly smaller for card header */
+      background-color: var(--light-blue-gradient-end);
+      border-bottom: 1px solid #e0e0e0; /* Softer border */
+      border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+      color: var(--primary-blue);
+      padding: 1.25rem 1.5rem; /* More padding */
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    input.form-control, select.form-select {
+      border-radius: var(--border-radius-sm); /* Standard small radius */
+      height: 3rem;
+      font-weight: 500; /* Slightly less bold */
+      font-size: 1rem;
+      padding: 0 0.85rem;
+      border: 1px solid #ced4da;
+      color: var(--text-dark);
+      transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    input.form-control:focus, select.form-select:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-blue-rgb), 0.2); /* Softer focus shadow */
+    }
+
+    .criterion-item {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1.2fr; /* Adjusted profile column for longer placeholder */
+      gap: 1rem;
+      align-items: center;
+    }
+    .criterion-item .form-control, .criterion-item .form-select {
+        margin-bottom: 0;
+    }
+
+    /* --- Button Styles --- */
+    .btn-group {
+        display: flex;
+        gap: 0.75rem; /* Increased gap */
+        justify-content: center; /* Center the add/remove buttons */
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-outline-primary, .btn-outline-danger {
+        font-weight: 600; /* More prominent text */
+        border-width: 2px; /* Thicker border for outline buttons */
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius-sm);
+        transition: background-color var(--transition-speed), color var(--transition-speed), border-color var(--transition-speed);
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary-blue);
+        color: var(--text-light);
+    }
+    .btn-outline-danger {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: var(--text-light);
+    }
+
+    .btn-success {
+        background-color: var(--success-green);
+        border-color: var(--success-green);
+        border-radius: 2rem; /* Pill shape */
+        padding: 0.85rem 2.5rem; /* More padding for large button */
+        font-size: 1.15rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(var(--success-green-rgb), 0.2); /* Subtle green shadow */
+        transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .btn-success:hover {
+        background-color: var(--success-green-hover);
+        border-color: var(--success-green-hover);
+        transform: translateY(-2px); /* Slight lift on hover */
+        box-shadow: 0 6px 20px rgba(var(--success-green-rgb), 0.3);
+    }
+
+    /* --- Footer Styles --- */
+    .footer {
+        background-color: var(--header-footer-bg);
+        color: var(--text-light);
+        padding: 1rem 0;
+        text-align: center;
+        font-size: 0.85em; /* Slightly smaller font */
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05); /* Shadow above footer */
+        margin-top: auto; /* Crucial for pushing footer to the bottom */
+    }
+    .footer a {
+        color: var(--text-light);
+        text-decoration: none;
+        transition: text-decoration var(--transition-speed);
+    }
+    .footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Helper for primary-blue-rgb and success-green-rgb in JS/CSS */
+    body::before {
+      content: '';
+      display: none;
+      --primary-blue-rgb: 41, 171, 226; /* RGB value for #29abe2 */
+      --success-green-rgb: 92, 184, 92; /* RGB value for #5cb85c */
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .header .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .header .logo {
+            height: 30px;
+            margin-right: 8px;
+        }
+        .main-content {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 1.75rem;
+        }
+        .criterion-item {
+            grid-template-columns: 1fr; /* Stack columns on small screens */
+            gap: 0.75rem;
+        }
+        .btn-group {
+            flex-direction: column; /* Stack buttons on small screens */
+            gap: 0.75rem;
+        }
+        .btn-outline-primary, .btn-outline-danger, .btn-success {
+            width: 100%; /* Full width buttons */
+        }
+        .card-body {
+            padding: 1rem;
+        }
+    }
   </style>
 </head>
-<body class="py-5">
-  <div class="container">
-    <div class="card p-4 mb-5">
-      <h2 class="step-header mb-4">Kriteria, Impact, dan Profil Ideal</h2>
-      <form method="POST" id="criteriaForm">
-        <div class="row g-3" id="criteriaContainer">
-          {% for i in range(3) %}
-          <div class="col-12 criteria-item" data-index="{{i}}">
-            <div class="row gx-2 gy-3 align-items-end">
-              <div class="col-md-5">
-                <div class="form-floating">
-                  <input name="criteria[]" type="text" class="form-control" id="crit{{i}}" placeholder="Nama Kriteria" required>
-                  <label for="crit{{i}}">Nama Kriteria</label>
+<body>
+
+  <header class="header">
+    <div class="container d-flex justify-content-center align-items-center">
+      <a class="navbar-brand" href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='hospital_logo.png') }}" alt="Hospital Logo" class="logo">
+        Sistem SPK Rumah Sakit
+      </a>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="container">
+      {# Flash messages container #}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="row">
+            <div class="col-12">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-              </div>
-              <div class="col-md-3">
-                <div class="form-floating">
-                  <select name="impact[]" class="form-select" id="impact{{i}}">
-                    <option value="+" selected>Benefit</option>
-                    <option value="-">Cost</option>
-                  </select>
-                  <label for="impact{{i}}">Impact</label>
-                </div>
-              </div>
-              <div class="col-md-4">
-                <div class="form-floating">
-                  <input name="profile[]" type="number" step="any" class="form-control" id="profile{{i}}" placeholder="Profil Ideal" required>
-                  <label for="profile{{i}}">Profil Ideal</label>
-                </div>
-              </div>
+              {% endfor %}
             </div>
           </div>
-          {% endfor %}
-        </div>
-        <div class="d-flex justify-content-between align-items-center mt-4">
-          <div>
-            <button type="button" class="btn btn-outline-primary me-2" id="addCriteriaBtn">+ Tambah Kriteria</button>
-            <button type="button" class="btn btn-outline-danger" id="removeCriteriaBtn">− Kurangi Kriteria</button>
+        {% endif %}
+      {% endwith %}
+
+      <h2>Definisi Kriteria</h2>
+      <div class="mb-4 d-flex justify-content-center gap-3">
+        <button type="button" class="btn btn-outline-primary" id="addCritBtn">+ Tambah Kriteria</button>
+        <button type="button" class="btn btn-outline-danger" id="removeCritBtn">− Kurangi Kriteria</button>
+      </div>
+      <form method="POST" novalidate id="kriteriaForm" enctype="multipart/form-data">
+        <div class="card mb-4">
+          <div class="card-header">Daftar Kriteria dan Profil Ideal</div>
+          <div class="card-body">
+            <div id="criteriaContainer">
+              {# Loop for initial 3 criteria cards #}
+              {% for i in range(3) %}
+              <div class="criterion-item mb-3" data-index="{{ i }}">
+                <input
+                  name="criteria[]"
+                  class="form-control"
+                  placeholder="Nama Kriteria (e.g., Harga, Kualitas)"
+                  aria-label="Nama Kriteria {{ i + 1 }}"
+                />
+                <select name="impact[]" class="form-select" aria-label="Dampak Kriteria {{ i + 1 }}">
+                  <option value="+">Benefit (+)</option>
+                  <option value="-">Cost (-)</option>
+                </select>
+                <input
+                  name="profile[]"
+                  type="number"
+                  step="any"
+                  class="form-control"
+                  placeholder="Nilai Ideal (e.g., 5 atau 1.000.000)"
+                  aria-label="Nilai Ideal Kriteria {{ i + 1 }}"
+                />
+              </div>
+              {% endfor %}
+            </div>
           </div>
-          <button type="submit" class="btn btn-lg btn-primary rounded-pill px-5">
-            Lanjut ke Pairwise
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-header">Atau Unggah dari File (CSV/Excel)</div>
+            <div class="card-body">
+                <p class="text-muted mb-3">
+                    Unggah file CSV atau Excel (.xlsx) dengan kolom berikut:
+                    <strong>Nama Kriteria</strong>, <strong>Dampak</strong>, <strong>Nilai Ideal</strong>.
+                    <br>
+                    <a href="{{ url_for('static', filename='template_kriteria.csv') }}" download="template_kriteria.csv" class="btn btn-sm btn-outline-info mt-2">
+                        <i class="fas fa-download me-1"></i> Unduh Template CSV
+                    </a>
+                </p>
+                <input type="file" name="file_upload" id="fileUpload" class="form-control">
+                <div id="fileValidationMessage" class="mt-2"></div>
+            </div>
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <button type="submit" class="btn btn-lg btn-success" id="submitButton">
+            Lanjutkan ke Matriks Berpasangan
           </button>
         </div>
       </form>
     </div>
   </div>
 
-<script>
-  const container = document.getElementById('criteriaContainer');
-  const addBtn = document.getElementById('addCriteriaBtn');
-  const removeBtn = document.getElementById('removeCriteriaBtn');
+  <footer class="footer">
+    <div class="container">
+      <span>&copy; 2025 Sistem SPK Rumah Sakit. Dibuat dengan &hearts; di Depok, Yogyakarta.</span>
+    </div>
+  </footer>
 
-  function updateRemoveBtnState() {
-    const count = container.querySelectorAll('.criteria-item').length;
-    removeBtn.disabled = count <= 1;  // minimal 1 kriteria harus ada
-  }
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
-  addBtn.addEventListener('click', () => {
-    const currentCount = container.querySelectorAll('.criteria-item').length;
-    const newIndex = currentCount;
+  <script>
+    const criteriaContainer = document.getElementById('criteriaContainer');
+    const addCritBtn = document.getElementById('addCritBtn');
+    const removeCritBtn = document.getElementById('removeCritBtn');
+    const fileUpload = document.getElementById('fileUpload');
+    const kriteriaForm = document.getElementById('kriteriaForm');
+    const fileValidationMessage = document.getElementById('fileValidationMessage');
+    const submitButton = document.getElementById('submitButton'); // Get the submit button
 
-    const newDiv = document.createElement('div');
-    newDiv.classList.add('col-12', 'criteria-item');
-    newDiv.setAttribute('data-index', newIndex);
-    newDiv.innerHTML = `
-      <div class="row gx-2 gy-3 align-items-end">
-        <div class="col-md-5">
-          <div class="form-floating">
-            <input name="criteria[]" type="text" class="form-control" id="crit${newIndex}" placeholder="Nama Kriteria" required>
-            <label for="crit${newIndex}">Nama Kriteria</label>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="form-floating">
-            <select name="impact[]" class="form-select" id="impact${newIndex}">
-              <option value="+" selected>Benefit</option>
-              <option value="-">Cost</option>
-            </select>
-            <label for="impact${newIndex}">Impact</label>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="form-floating">
-            <input name="profile[]" type="number" step="any" class="form-control" id="profile${newIndex}" placeholder="Profil Ideal" required>
-            <label for="profile${newIndex}">Profil Ideal</label>
-          </div>
-        </div>
-      </div>
-    `;
-    container.appendChild(newDiv);
-    updateRemoveBtnState();
-  });
+    const REQUIRED_HEADERS = ['Nama Kriteria', 'Dampak', 'Nilai Ideal'];
 
-  removeBtn.addEventListener('click', () => {
-    const criteriaItems = container.querySelectorAll('.criteria-item');
-    if (criteriaItems.length > 1) {
-      container.removeChild(criteriaItems[criteriaItems.length - 1]);
-      updateRemoveBtnState();
+    function updateRemoveCritBtnState() {
+      const count = criteriaContainer.querySelectorAll('.criterion-item').length;
+      removeCritBtn.disabled = count <= 1;
     }
-  });
 
-  updateRemoveBtnState();
-</script>
+    function createCriterionRow(index) {
+      const div = document.createElement('div');
+      div.classList.add('criterion-item', 'mb-3');
+      div.setAttribute('data-index', index);
 
+      div.innerHTML = `
+        <input
+          name="criteria[]"
+          class="form-control"
+          placeholder="Nama Kriteria (e.g., Harga, Kualitas)"
+          aria-label="Nama Kriteria ${index + 1}"
+        />
+        <select name="impact[]" class="form-select" aria-label="Dampak Kriteria ${index + 1}">
+          <option value="+">Benefit (+)</option>
+          <option value="-">Cost (-)</option>
+        </select>
+        <input
+          name="profile[]"
+          type="number"
+          step="any"
+          class="form-control"
+          placeholder="Nilai Ideal (e.g., 5 atau 1.000.000)"
+          aria-label="Nilai Ideal Kriteria ${index + 1}"
+        />
+      `;
+      return div;
+    }
+
+    // New function to populate manual inputs from parsed data
+    function populateManualInputs(data) {
+        // Clear existing rows first, except one if it's the default empty one
+        while (criteriaContainer.firstChild) {
+            criteriaContainer.removeChild(criteriaContainer.firstChild);
+        }
+
+        if (data.length === 0) {
+            // Add a single empty row if the file was empty
+            criteriaContainer.appendChild(createCriterionRow(0));
+        } else {
+            data.forEach((row, index) => {
+                const newRow = createCriterionRow(index);
+                newRow.querySelector('input[name="criteria[]"]').value = row['Nama Kriteria'] || '';
+                newRow.querySelector('select[name="impact[]"]').value = row['Dampak'] || '+'; // Default to Benefit
+
+                // Handle potential NaN or empty for 'Nilai Ideal'
+                const profileInput = newRow.querySelector('input[name="profile[]"]');
+                if (row['Nilai Ideal'] !== undefined && row['Nilai Ideal'] !== null && String(row['Nilai Ideal']).trim() !== '') {
+                    profileInput.value = String(row['Nilai Ideal']).trim();
+                } else {
+                    profileInput.value = '';
+                }
+                criteriaContainer.appendChild(newRow);
+            });
+        }
+        updateRemoveCritBtnState(); // Update add/remove button states
+    }
+
+    addCritBtn.addEventListener('click', () => {
+      const currentCount = criteriaContainer.querySelectorAll('.criterion-item').length;
+      const newRow = createCriterionRow(currentCount);
+      criteriaContainer.appendChild(newRow);
+      updateRemoveCritBtnState();
+      // Clear file input and messages if manual input is used
+      fileUpload.value = '';
+      fileValidationMessage.innerHTML = '';
+      submitButton.disabled = false; // Enable submit button
+    });
+
+    removeCritBtn.addEventListener('click', () => {
+      const rows = criteriaContainer.querySelectorAll('.criterion-item');
+      if (rows.length > 1) {
+        criteriaContainer.removeChild(rows[rows.length - 1]);
+        updateRemoveCritBtnState();
+        // Clear file input and messages if manual input is used
+        fileUpload.value = '';
+        fileValidationMessage.innerHTML = '';
+        submitButton.disabled = false; // Enable submit button
+      }
+    });
+
+    // Function to display messages
+    function displayMessage(message, type) {
+        fileValidationMessage.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`;
+    }
+
+    // Function to validate file content (now returns parsed data on success)
+    async function validateFile(file) {
+        const fileName = file.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        fileValidationMessage.innerHTML = ''; // Clear previous messages
+        submitButton.disabled = true; // Disable submit button by default
+
+        if (!['csv', 'xls', 'xlsx'].includes(fileExtension)) {
+            displayMessage('Format file tidak mendukung. Harap unggah file CSV atau Excel (.xlsx).', 'danger');
+            return null; // Return null on failure
+        }
+
+        try {
+            let data;
+            const fileReader = new FileReader();
+            const fileLoadPromise = new Promise((resolve, reject) => {
+                fileReader.onload = (e) => resolve(e.target.result);
+                fileReader.onerror = reject;
+            });
+            fileReader.readAsBinaryString(file);
+            const binaryString = await fileLoadPromise;
+
+
+            if (fileExtension === 'csv') {
+                data = await new Promise((resolve, reject) => {
+                    Papa.parse(binaryString, {
+                        header: true,
+                        skipEmptyLines: true,
+                        complete: function(results) {
+                            if (results.errors.length) {
+                                const errorMessage = results.errors[0].message;
+                                if (errorMessage.includes("Too few fields") && errorMessage.includes("parsed 1")) {
+                                    reject(new Error(errorMessage + ". Pastikan kolom dipisahkan oleh koma (,) atau coba unduh template."));
+                                } else {
+                                    reject(new Error('Kesalahan parsing CSV: ' + errorMessage));
+                                }
+                            }
+                            resolve(results.data);
+                        },
+                        error: function(err) {
+                            reject(err);
+                        }
+                    });
+                });
+            } else { // xls, xlsx
+                const workbook = XLSX.read(binaryString, { type: 'binary' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[sheetName];
+                const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 }); // Read raw data to check headers
+
+                if (!rawData || rawData.length === 0) {
+                    displayMessage('File kosong atau tidak memiliki data.', 'danger');
+                    return null;
+                }
+                const headers = rawData[0];
+                data = XLSX.utils.sheet_to_json(XLSX.utils.aoa_to_sheet(rawData), { header: headers });
+            }
+
+            // Check if data is empty (no rows besides header)
+            if (!data || data.length === 0) {
+                displayMessage('File kosong atau tidak memiliki data kriteria.', 'danger');
+                return null;
+            }
+
+            // Check for required headers
+            const actualHeaders = Object.keys(data[0]);
+            const missingHeaders = REQUIRED_HEADERS.filter(header => !actualHeaders.includes(header));
+
+            if (missingHeaders.length > 0) {
+                displayMessage(`Kolom yang dibutuhkan tidak ditemukan: ${missingHeaders.join(', ')}. Harap periksa format file Anda atau unduh template.`, 'danger');
+                return null;
+            }
+
+            // Basic check for valid impact values
+            const invalidImpacts = data.filter(row => {
+                const impactVal = String(row['Dampak']).trim();
+                return !['+', '-'].includes(impactVal);
+            });
+            if (invalidImpacts.length > 0) {
+                displayMessage('Nilai "Dampak" tidak valid. Harap gunakan hanya "+" atau "-".', 'danger');
+                return null;
+            }
+
+            // Basic check for 'Nilai Ideal' being convertible to number if not empty
+            const invalidProfileValues = data.filter(row => {
+                const profileVal = String(row['Nilai Ideal']).trim();
+                return profileVal !== '' && isNaN(Number(profileVal));
+            });
+            if (invalidProfileValues.length > 0) {
+                displayMessage('Nilai "Nilai Ideal" harus angka atau kosong. Harap periksa format data Anda.', 'danger');
+                return null;
+            }
+
+            // If all checks pass, return the parsed data
+            displayMessage('File kriteria berhasil diunggah dan valid!', 'success');
+            submitButton.disabled = false; // Enable submit button
+            return data; // Return the data instead of just true
+
+        } catch (error) {
+            displayMessage(`Terjadi kesalahan saat memproses file: ${error.message}.`, 'danger');
+            return null; // Return null on failure
+        }
+    }
+
+
+    // Event listener for file input change
+    fileUpload.addEventListener('change', async () => {
+        if (fileUpload.files.length > 0) {
+            const file = fileUpload.files[0];
+            const parsedData = await validateFile(file); // Get parsed data
+
+            if (parsedData) { // If validation passed and data is returned
+                populateManualInputs(parsedData); // Populate the manual inputs
+                submitButton.disabled = false; // Ensure submit button is enabled
+            } else {
+                // If file is not valid, clear file input to allow re-upload
+                fileUpload.value = '';
+                submitButton.disabled = true; // Keep button disabled
+                // Don't clear manual inputs if file upload fails, let user fix/try again
+                // Or you could clear them if you want to force file use on successful upload
+            }
+        } else {
+            fileValidationMessage.innerHTML = ''; // Clear message if no file selected
+            submitButton.disabled = false; // Enable submit button if no file selected (rely on manual input)
+            // If user clears file input, and manual fields are also empty, disable submit
+            const manualInputsFilled = Array.from(criteriaContainer.querySelectorAll('input[name="criteria[]"]')).some(input => input.value.trim() !== '');
+            if (!manualInputsFilled) {
+                submitButton.disabled = true;
+            }
+        }
+    });
+
+    // Initial state setup
+    updateRemoveCritBtnState();
+    // Initially disable submit if no manual input is present and no file selected
+    const initialManualInputsFilled = Array.from(criteriaContainer.querySelectorAll('input[name="criteria[]"]')).some(input => input.value.trim() !== '');
+    if (!initialManualInputsFilled && fileUpload.files.length === 0) {
+        submitButton.disabled = true;
+    } else {
+        submitButton.disabled = false;
+    }
+
+    // Add event listener to re-validate submit button state if manual inputs change
+    criteriaContainer.addEventListener('input', () => {
+        const manualInputsFilled = Array.from(criteriaContainer.querySelectorAll('input[name="criteria[]"]')).some(input => input.value.trim() !== '');
+        if (manualInputsFilled) {
+            submitButton.disabled = false;
+            fileValidationMessage.innerHTML = ''; // Clear file messages if manual input starts
+            fileUpload.value = ''; // Clear file input
+        } else if (fileUpload.files.length === 0) {
+            submitButton.disabled = true; // Disable if no manual and no file
+        }
+    });
+
+
+  </script>
 </body>
 </html>

@@ -2,83 +2,436 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Data Alternatif</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Data Alternatif - Sistem SPK Rumah Sakit</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body { background-color: #f8f9fa; }
-    .card {
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    :root {
+      --primary-blue: #29abe2;
+      --light-blue-gradient-start: #f0f8ff;
+      --light-blue-gradient-end: #e6f7ff;
+      --dark-blue-gradient-start: #1c86ba;
+      --dark-blue-gradient-end: #3eb4fa;
+      --success-green: #5cb85c;
+      --success-green-hover: #4cae4c;
+      --text-dark: #495057;
+      --text-light: white;
+      --card-bg: #ffffff;
+      --shadow-light: 0 5px 20px rgba(0, 0, 0, 0.08);
+      --shadow-deep: 0 15px 40px rgba(0, 0, 0, 0.2);
+      --border-radius-sm: 0.5rem;
+      --border-radius-md: 1rem;
+      --border-radius-lg: 1.5rem;
+      --transition-speed: 0.3s ease-in-out;
+      --header-footer-bg: var(--primary-blue);
+      --header-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      --error-bg: #ffebeb;
+      --error-border: #ffcccb;
+      --error-text: #b00020;
     }
-    .card-header {
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--light-blue-gradient-start), var(--light-blue-gradient-end));
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .flash-messages-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        z-index: 1050;
+        padding: 0.75rem;
+        box-sizing: border-box;
+    }
+    .flash-messages-container .alert {
+        margin-bottom: 0;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .flash-messages-spacer {
+        height: 0;
+        transition: height 0.3s ease-in-out;
+    }
+
+    .header {
+      background-color: var(--header-footer-bg);
+      color: var(--text-light);
+      padding: 1rem 0;
+      box-shadow: var(--header-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+    }
+
+    .header .navbar-brand {
+      display: flex;
+      align-items: center;
+      color: var(--text-light);
+      font-size: 1.75rem;
       font-weight: 700;
-      font-size: 1.25rem;
-      background-color: #ffffff;
-      border-bottom: 1px solid #dee2e6;
-      border-radius: 1rem 1rem 0 0;
+      text-decoration: none;
+      transition: color var(--transition-speed);
     }
-    input.form-control {
-      border-radius: 0.5rem;
-      height: 3rem;
-      font-weight: 600;
-      font-size: 1rem;
-      padding: 0 0.75rem;
+
+    .header .navbar-brand:hover {
+      color: rgba(255, 255, 255, 0.8);
     }
+
+    .header .logo {
+      height: 35px;
+      margin-right: 12px;
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+    }
+
+    .main-content {
+      flex: 1;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
     h2 {
       font-weight: 700;
       letter-spacing: 0.5px;
       margin-bottom: 1.5rem;
+      color: var(--primary-blue);
+      text-align: center;
+    }
+
+    .card {
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-light);
+      border: none;
+      background-color: var(--card-bg);
+      overflow: hidden;
+    }
+
+    .card-header {
+      font-weight: 700;
+      font-size: 1.2rem;
+      background-color: var(--light-blue-gradient-end);
+      border-bottom: 1px solid #e0e0e0;
+      border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+      color: var(--primary-blue);
+      padding: 1.25rem 1.5rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    input.form-control {
+      border-radius: var(--border-radius-sm);
+      height: 3rem;
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 0 0.85rem;
+      border: 1px solid #ced4da;
+      color: var(--text-dark);
+      transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    input.form-control:focus {
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(41, 171, 226, 0.2);
+    }
+
+    input.form-control.is-invalid {
+        border-color: var(--error-border);
+        box-shadow: 0 0 0 0.2rem rgba(176, 0, 32, 0.25);
+    }
+    .invalid-feedback {
+        display: block;
+    }
+
+    .range-input-group {
+        display: flex;
+        gap: 0.75rem;
+        margin-bottom: 1rem;
+    }
+    .range-input-group input {
+        flex: 1;
+    }
+    .form-label {
+        color: var(--text-dark);
+        font-weight: 500;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-outline-primary, .btn-outline-danger {
+        font-weight: 600;
+        border-width: 2px;
+        padding: 0.75rem 1.5rem;
+        border-radius: var(--border-radius-sm);
+        transition: all var(--transition-speed);
+    }
+
+    .btn-outline-primary {
+        color: var(--primary-blue);
+        border-color: var(--primary-blue);
+    }
+    .btn-outline-primary:hover {
+        background-color: var(--primary-blue);
+        color: var(--text-light);
+    }
+    .btn-outline-danger {
+        color: #dc3545;
+        border-color: #dc3545;
+    }
+    .btn-outline-danger:hover {
+        background-color: #dc3545;
+        color: var(--text-light);
+    }
+
+    .btn-success {
+        background-color: var(--success-green);
+        border-color: var(--success-green);
+        border-radius: 2rem;
+        padding: 0.85rem 2.5rem;
+        font-size: 1.15rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(92, 184, 92, 0.2);
+        transition: all var(--transition-speed);
+    }
+
+    .btn-success:hover {
+        background-color: var(--success-green-hover);
+        border-color: var(--success-green-hover);
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(92, 184, 92, 0.3);
+    }
+
+    .footer {
+        background-color: var(--header-footer-bg);
+        color: var(--text-light);
+        padding: 1rem 0;
+        text-align: center;
+        font-size: 0.85em;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        margin-top: auto;
+    }
+    .footer a {
+        color: var(--text-light);
+        text-decoration: none;
+        transition: text-decoration var(--transition-speed);
+    }
+    .footer a:hover {
+        text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+        .header .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .header .logo {
+            height: 30px;
+            margin-right: 8px;
+        }
+        .main-content {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 1.75rem;
+        }
+        .btn-group {
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        .btn-outline-primary, .btn-outline-danger, .btn-success {
+            width: 100%;
+        }
+        .card-body {
+            padding: 1rem;
+        }
+        .range-input-group {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
     }
   </style>
 </head>
-<body class="py-5">
-  <div class="container">
-    <h2>Data Alternatif</h2>
-    <div class="mb-3 d-flex gap-2">
-      <button type="button" class="btn btn-outline-primary" id="addAltBtn">+ Tambah Alternatif</button>
-      <button type="button" class="btn btn-outline-danger" id="removeAltBtn">− Kurangi Alternatif</button>
-    </div>
-    <form method="POST" novalidate id="altForm">
-      <div id="altContainer">
-        {% for i in range(3) %}
-        <div class="card mb-4 alt-item" data-index="{{ i }}">
-          <div class="card-header">Alternatif {{ i + 1 }}</div>
-          <div class="card-body">
-            <input
-              name="alt_name[]"
-              class="form-control mb-3"
-              placeholder="Nama Rumah Sakit"
-              required
-              aria-label="Nama Rumah Sakit Alternatif {{ i + 1 }}"
-            />
-            {% for k in criteria %}
-            <input
-              name="alt_{{ i }}[]"
-              type="number"
-              step="any"
-              class="form-control mb-3"
-              placeholder="Nilai {{ k }}"
-              required
-              aria-label="Nilai {{ k }} Alternatif {{ i + 1 }}"
-            />
-            {% endfor %}
+<body>
+  <div class="flash-messages-container">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
           </div>
-        </div>
         {% endfor %}
-      </div>
-      <div class="d-flex justify-content-end">
-        <button type="submit" class="btn btn-lg btn-success rounded-pill px-5">
-          Proses dan Tampilkan Hasil
-        </button>
-      </div>
-    </form>
+      {% endif %}
+    {% endwith %}
   </div>
+  <div class="flash-messages-spacer"></div>
+
+  <header class="header">
+    <div class="container d-flex justify-content-center align-items-center">
+      <a class="navbar-brand" href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='hospital_logo.png') }}" alt="Hospital Logo" class="logo">
+        Sistem SPK Rumah Sakit
+      </a>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="container">
+      <h2>Data Alternatif</h2>
+
+      <div class="card mb-4">
+          <div class="card-header">Unggah Data Alternatif dari File (CSV/Excel)</div>
+          <div class="card-body">
+              <p class="text-muted mb-3">
+                  Unggah file CSV atau Excel (.xlsx) dengan kolom: <strong>Nama Rumah Sakit</strong>, dan kolom-kolom kriteria Anda.
+                  <br>
+                  <small>Untuk kriteria range (seperti Lokasi), gunakan format "min-max" atau angka tunggal</small>
+                  <br>
+                  <a href="{{ url_for('static', filename='template_alternatif.csv') }}" download="template_alternatif.csv" class="btn btn-sm btn-outline-info mt-2">
+                      <i class="fas fa-download me-1"></i> Unduh Template CSV
+                  </a>
+              </p>
+              <input type="file" name="alt_file_upload" id="altFileUpload" class="form-control" accept=".csv, .xlsx, .xls">
+              <div id="fileValidationMessage" class="mt-2"></div>
+          </div>
+      </div>
+
+      <div class="mb-4 d-flex justify-content-center gap-3">
+        <button type="button" class="btn btn-outline-primary" id="addAltBtn">+ Tambah Alternatif</button>
+        <button type="button" class="btn btn-outline-danger" id="removeAltBtn">− Kurangi Alternatif</button>
+      </div>
+
+      <form method="POST" novalidate id="altForm" enctype="multipart/form-data">
+        <div id="altContainer">
+          {% for i in range(3) %}
+          <div class="card mb-4 alt-item" data-index="{{ i }}">
+            <div class="card-header">Alternatif {{ i + 1 }}</div>
+            <div class="card-body">
+              <input
+                name="alt_name[]"
+                class="form-control mb-3"
+                placeholder="Nama Rumah Sakit"
+                required
+                aria-label="Nama Rumah Sakit Alternatif {{ i + 1 }}"
+              />
+              {% for k in criteria %}
+                {% if crit_types[loop.index0] == 'scaled' %}
+                  <input
+                    name="alt_{{ i }}_scaled_{{ loop.index0 }}"
+                    type="number"
+                    step="any"
+                    min="1"
+                    max="5"
+                    class="form-control mb-3"
+                    placeholder="Nilai {{ k }} (Skala 1-5)"
+                    required
+                    aria-label="Nilai {{ k }} Alternatif {{ i + 1 }}"
+                  />
+                {% elif crit_types[loop.index0] == 'range' %}
+                  <label class="form-label d-block mb-1">Nilai {{ k }} (Rentang Numerik)</label>
+                  <div class="range-input-group mb-3">
+                    <input
+                      name="alt_{{ i }}_range_min_{{ loop.index0 }}"
+                      type="number"
+                      step="any"
+                      min="0"
+                      class="form-control"
+                      placeholder="Min"
+                      required
+                      aria-label="Nilai Minimum {{ k }} Alternatif {{ i + 1 }}"
+                    />
+                    <input
+                      name="alt_{{ i }}_range_max_{{ loop.index0 }}"
+                      type="number"
+                      step="any"
+                      min="0"
+                      class="form-control"
+                      placeholder="Max"
+                      required
+                      aria-label="Nilai Maksimum {{ k }} Alternatif {{ i + 1 }}"
+                    />
+                  </div>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="d-flex justify-content-end mt-4">
+          <button type="submit" class="btn btn-lg btn-success" id="submitButton">
+            Proses dan Tampilkan Hasil
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container">
+      <span>&copy; 2025 Sistem SPK Rumah Sakit. Dibuat dengan &hearts; di Depok, Yogyakarta.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.0/papaparse.min.js"></script>
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
 
   <script>
     const altContainer = document.getElementById('altContainer');
     const addAltBtn = document.getElementById('addAltBtn');
     const removeAltBtn = document.getElementById('removeAltBtn');
-    const criteria = {{ criteria|tojson|safe }};
+    const altFileUpload = document.getElementById('altFileUpload');
+    const fileValidationMessage = document.getElementById('fileValidationMessage');
+    const submitButton = document.getElementById('submitButton');
+
+    // Get criteria and types from Flask template variables
+    const criteria = {{ criteria | tojson }};
+    const critTypes = {{ crit_types | tojson }};
+    const REQUIRED_HEADERS_ALT = ['Nama Rumah Sakit', ...criteria];
+
+    // Flash messages handling
+    const flashMessagesContainer = document.querySelector('.flash-messages-container');
+    const flashMessagesSpacer = document.querySelector('.flash-messages-spacer');
+
+    function adjustSpacerHeight() {
+        if (flashMessagesContainer.offsetHeight > 0) {
+            flashMessagesSpacer.style.height = flashMessagesContainer.offsetHeight + 'px';
+        } else {
+            flashMessagesSpacer.style.height = '0px';
+        }
+    }
+
+    const observer = new MutationObserver(adjustSpacerHeight);
+    observer.observe(flashMessagesContainer, { childList: true, subtree: true });
+    window.addEventListener('load', adjustSpacerHeight);
+    window.addEventListener('resize', adjustSpacerHeight);
 
     function updateRemoveBtnState() {
       const count = altContainer.querySelectorAll('.alt-item').length;
@@ -102,18 +455,51 @@
           />
       `;
 
-      for (const k of criteria) {
-        inputsHTML += `
-          <input
-            name="alt_${index}[]"
-            type="number"
-            step="any"
-            class="form-control mb-3"
-            placeholder="Nilai ${k}"
-            required
-            aria-label="Nilai ${k} Alternatif ${index + 1}"
-          />
-        `;
+      for (let k_idx = 0; k_idx < criteria.length; k_idx++) {
+        const k = criteria[k_idx];
+        const critType = critTypes[k_idx];
+
+        if (critType === 'scaled') {
+          inputsHTML += `
+            <input
+              name="alt_${index}_scaled_${k_idx}"
+              type="number"
+              step="any"
+              min="1"
+              max="5"
+              class="form-control mb-3"
+              placeholder="Nilai ${k} (Skala 1-5)"
+              required
+              aria-label="Nilai ${k} Alternatif ${index + 1}"
+            />
+          `;
+        } else if (critType === 'range') {
+          inputsHTML += `
+            <label class="form-label d-block mb-1">Nilai ${k} (Rentang Numerik)</label>
+            <div class="range-input-group mb-3">
+              <input
+                name="alt_${index}_range_min_${k_idx}"
+                type="number"
+                step="any"
+                min="0"
+                class="form-control"
+                placeholder="Min"
+                required
+                aria-label="Nilai Minimum ${k} Alternatif ${index + 1}"
+              />
+              <input
+                name="alt_${index}_range_max_${k_idx}"
+                type="number"
+                step="any"
+                min="0"
+                class="form-control"
+                placeholder="Max"
+                required
+                aria-label="Nilai Maksimum ${k} Alternatif ${index + 1}"
+              />
+            </div>
+          `;
+        }
       }
 
       inputsHTML += '</div>';
@@ -121,22 +507,307 @@
       return div;
     }
 
+    function displayFileMessage(message, type) {
+        fileValidationMessage.innerHTML = `<div class="alert alert-${type} alert-dismissible fade show" role="alert">
+            ${message}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>`;
+    }
+
+    async function parseCSVFile(file) {
+        return new Promise((resolve, reject) => {
+            Papa.parse(file, {
+                header: true,
+                skipEmptyLines: true,
+                complete: (results) => {
+                    if (results.errors.length) {
+                        reject(new Error(results.errors[0].message));
+                    } else {
+                        resolve(results.data);
+                    }
+                },
+                error: (error) => reject(error)
+            });
+        });
+    }
+
+    async function parseExcelFile(file) {
+        const arrayBuffer = await file.arrayBuffer();
+        const workbook = XLSX.read(arrayBuffer);
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        return XLSX.utils.sheet_to_json(worksheet);
+    }
+
+    function parseRangeValue(value) {
+        value = String(value || '').trim();
+        if (value.includes('-')) {
+            const parts = value.split('-').map(p => p.trim());
+            if (parts.length !== 2) return { error: 'Format range tidak valid. Gunakan min-max' };
+
+            const min = parseFloat(parts[0]);
+            const max = parseFloat(parts[1]);
+
+            if (isNaN(min) || isNaN(max)) return { error: 'Nilai min dan max harus angka' };
+            if (min > max) return { error: 'Nilai min tidak boleh lebih besar dari max' };
+
+            return { min, max };
+        } else {
+            const numValue = parseFloat(value);
+            if (isNaN(numValue)) return { error: 'Nilai harus angka' };
+            return { min: numValue, max: numValue };
+        }
+    }
+
+    async function validateAndParseFile(file) {
+        const fileName = file.name;
+        const fileExtension = fileName.split('.').pop().toLowerCase();
+        fileValidationMessage.innerHTML = '';
+        submitButton.disabled = true;
+
+        if (!['csv', 'xls', 'xlsx'].includes(fileExtension)) {
+            displayFileMessage('Format file tidak didukung. Harap unggah file CSV atau Excel (.xlsx).', 'danger');
+            return null;
+        }
+
+        try {
+            let data = [];
+            if (fileExtension === 'csv') {
+                data = await parseCSVFile(file);
+            } else {
+                data = await parseExcelFile(file);
+            }
+
+            if (!data || data.length === 0) {
+                displayFileMessage('File tidak mengandung data.', 'danger');
+                return null;
+            }
+
+            const actualHeaders = Object.keys(data[0]);
+            const missingHeaders = REQUIRED_HEADERS_ALT.filter(header => !actualHeaders.includes(header));
+
+            if (missingHeaders.length > 0) {
+                displayFileMessage(`Kolom yang diperlukan tidak ditemukan: ${missingHeaders.join(', ')}`, 'danger');
+                return null;
+            }
+
+            let hasInvalidData = false;
+            data.forEach((row, rowIndex) => {
+                const hospitalName = String(row['Nama Rumah Sakit'] || '').trim();
+                if (!hospitalName) {
+                    displayFileMessage(`Nama Rumah Sakit kosong pada baris ${rowIndex + 2}`, 'warning');
+                    hasInvalidData = true;
+                }
+
+                criteria.forEach((critName, k_idx) => {
+                    const critType = critTypes[k_idx];
+                    const value = row[critName];
+
+                    if (value === undefined || value === null) {
+                        displayFileMessage(`Nilai ${critName} kosong pada baris ${rowIndex + 2}`, 'warning');
+                        hasInvalidData = true;
+                        return;
+                    }
+
+                    if (critType === 'scaled') {
+                        const numValue = parseFloat(value);
+                        if (isNaN(numValue)) {
+                            displayFileMessage(`Nilai ${critName} harus angka pada baris ${rowIndex + 2}`, 'warning');
+                            hasInvalidData = true;
+                        } else if (numValue < 1 || numValue > 5) {
+                            displayFileMessage(`Nilai ${critName} harus antara 1-5 pada baris ${rowIndex + 2}`, 'warning');
+                            hasInvalidData = true;
+                        }
+                    } else if (critType === 'range') {
+                        const rangeResult = parseRangeValue(value);
+                        if (rangeResult.error) {
+                            displayFileMessage(`${critName} pada baris ${rowIndex + 2}: ${rangeResult.error}`, 'warning');
+                            hasInvalidData = true;
+                        }
+                    }
+                });
+            });
+
+            if (hasInvalidData) return null;
+
+            displayFileMessage('File berhasil divalidasi! Data siap diproses.', 'success');
+            submitButton.disabled = false;
+            return data;
+        } catch (error) {
+            displayFileMessage(`Error memproses file: ${error.message}`, 'danger');
+            return null;
+        }
+    }
+
+    function populateManualAltInputs(data) {
+        while (altContainer.firstChild) {
+            altContainer.removeChild(altContainer.firstChild);
+        }
+
+        data.forEach((row, index) => {
+            const newCard = createAltCard(index);
+            const nameInput = newCard.querySelector('input[name="alt_name[]"]');
+            nameInput.value = String(row['Nama Rumah Sakit'] || '').trim();
+
+            criteria.forEach((critName, k_idx) => {
+                const critType = critTypes[k_idx];
+                const value = row[critName];
+
+                if (critType === 'scaled') {
+                    const input = newCard.querySelector(`input[name="alt_${index}_scaled_${k_idx}"]`);
+                    if (input) input.value = value;
+                } else if (critType === 'range') {
+                    const rangeResult = parseRangeValue(value);
+                    if (!rangeResult.error) {
+                        const minInput = newCard.querySelector(`input[name="alt_${index}_range_min_${k_idx}"]`);
+                        const maxInput = newCard.querySelector(`input[name="alt_${index}_range_max_${k_idx}"]`);
+                        if (minInput) minInput.value = rangeResult.min;
+                        if (maxInput) maxInput.value = rangeResult.max;
+                    }
+                }
+            });
+
+            altContainer.appendChild(newCard);
+        });
+
+        updateRemoveBtnState();
+    }
+
     addAltBtn.addEventListener('click', () => {
-      const currentCount = altContainer.querySelectorAll('.alt-item').length;
-      const newCard = createAltCard(currentCount);
-      altContainer.appendChild(newCard);
-      updateRemoveBtnState();
+        const currentCount = altContainer.querySelectorAll('.alt-item').length;
+        const newCard = createAltCard(currentCount);
+        altContainer.appendChild(newCard);
+        updateRemoveBtnState();
+        altFileUpload.value = '';
+        fileValidationMessage.innerHTML = '';
+        submitButton.disabled = false;
     });
 
     removeAltBtn.addEventListener('click', () => {
-      const cards = altContainer.querySelectorAll('.alt-item');
-      if (cards.length > 1) {
-        altContainer.removeChild(cards[cards.length - 1]);
-        updateRemoveBtnState();
-      }
+        const cards = altContainer.querySelectorAll('.alt-item');
+        if (cards.length > 1) {
+            altContainer.removeChild(cards[cards.length - 1]);
+            updateRemoveBtnState();
+            altFileUpload.value = '';
+            fileValidationMessage.innerHTML = '';
+            submitButton.disabled = altContainer.querySelectorAll('.alt-item input[name="alt_name[]"]')[0].value.trim() === '';
+        }
+    });
+
+    altFileUpload.addEventListener('change', async () => {
+        if (altFileUpload.files.length > 0) {
+            const file = altFileUpload.files[0];
+            const parsedData = await validateAndParseFile(file);
+
+            if (parsedData) {
+                populateManualAltInputs(parsedData);
+                submitButton.disabled = false;
+            } else {
+                altFileUpload.value = '';
+                submitButton.disabled = true;
+            }
+        } else {
+            fileValidationMessage.innerHTML = '';
+            submitButton.disabled = altContainer.querySelectorAll('.alt-item input[name="alt_name[]"]')[0].value.trim() === '';
+        }
+    });
+
+    altContainer.addEventListener('input', () => {
+        const hasManualInput = Array.from(altContainer.querySelectorAll('input[name="alt_name[]"]'))
+            .some(input => input.value.trim() !== '');
+
+        if (hasManualInput) {
+            fileValidationMessage.innerHTML = '';
+            altFileUpload.value = '';
+            submitButton.disabled = false;
+        } else if (altFileUpload.files.length === 0) {
+            submitButton.disabled = true;
+        }
+    });
+
+    document.getElementById('altForm').addEventListener('submit', (event) => {
+        let hasError = false;
+        const alternativeCards = altContainer.querySelectorAll('.alt-item');
+
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid'));
+        const existingGlobalAlert = document.querySelector('.flash-messages-container .alert-danger');
+        if (existingGlobalAlert) existingGlobalAlert.remove();
+
+        observer.disconnect();
+
+        alternativeCards.forEach((card, altIndex) => {
+            const altNameInput = card.querySelector('input[name="alt_name[]"]');
+            if (!altNameInput.value.trim()) {
+                altNameInput.classList.add('is-invalid');
+                hasError = true;
+            }
+
+            criteria.forEach((critName, k_idx) => {
+                const critType = critTypes[k_idx];
+
+                if (critType === 'scaled') {
+                    const input = card.querySelector(`input[name="alt_${altIndex}_scaled_${k_idx}"]`);
+                    const value = parseFloat(input.value);
+
+                    if (isNaN(value) || value < 1 || value > 5) {
+                        input.classList.add('is-invalid');
+                        hasError = true;
+                    }
+                } else if (critType === 'range') {
+                    const minInput = card.querySelector(`input[name="alt_${altIndex}_range_min_${k_idx}"]`);
+                    const maxInput = card.querySelector(`input[name="alt_${altIndex}_range_max_${k_idx}"]`);
+                    const minValue = parseFloat(minInput.value);
+                    const maxValue = parseFloat(maxInput.value);
+
+                    if (isNaN(minValue)) {
+                        minInput.classList.add('is-invalid');
+                        hasError = true;
+                    }
+
+                    if (isNaN(maxValue)) {
+                        maxInput.classList.add('is-invalid');
+                        hasError = true;
+                    }
+
+                    if (!isNaN(minValue) && !isNaN(maxValue) && minValue > maxValue) {
+                        minInput.classList.add('is-invalid');
+                        maxInput.classList.add('is-invalid');
+                        hasError = true;
+                    }
+                }
+            });
+        });
+
+        if (hasError) {
+            event.preventDefault();
+
+            const globalAlertContainer = document.querySelector('.flash-messages-container');
+            const newAlertDiv = document.createElement('div');
+            newAlertDiv.classList.add('alert', 'alert-danger', 'alert-dismissible', 'fade', 'show');
+            newAlertDiv.setAttribute('role', 'alert');
+            newAlertDiv.innerHTML = `
+                Harap perbaiki kesalahan input di bawah ini. Pastikan:
+                <ul>
+                    <li>Semua kolom terisi</li>
+                    <li>Nilai skala antara 1-5</li>
+                    <li>Nilai min ≤ max untuk kriteria range</li>
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            `;
+            globalAlertContainer.appendChild(newAlertDiv);
+            adjustSpacerHeight();
+
+            const firstInvalidInput = document.querySelector('.is-invalid');
+            if (firstInvalidInput) {
+                firstInvalidInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            }
+        }
+
+        observer.observe(flashMessagesContainer, { childList: true, subtree: true });
     });
 
     updateRemoveBtnState();
+    submitButton.disabled = altContainer.querySelectorAll('.alt-item input[name="alt_name[]"]')[0].value.trim() === '' && altFileUpload.files.length === 0;
   </script>
 </body>
 </html>

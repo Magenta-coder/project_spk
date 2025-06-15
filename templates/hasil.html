@@ -2,71 +2,309 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Hasil SPK</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hasil SPK - Sistem SPK Rumah Sakit</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
-    body {
-      background-color: #f8f9fa;
-      padding-top: 40px;
-      padding-bottom: 40px;
+    :root {
+      --primary-blue: #29abe2;
+      --light-blue-gradient-start: #f0f8ff;
+      --light-blue-gradient-end: #e6f7ff;
+      --dark-blue-gradient-start: #1c86ba;
+      --dark-blue-gradient-end: #3eb4fa;
+      --success-green: #5cb85c;
+      --success-green-hover: #4cae4c;
+      --text-dark: #495057;
+      --text-light: white;
+      --card-bg: #ffffff;
+      --shadow-light: 0 5px 20px rgba(0, 0, 0, 0.08);
+      --shadow-deep: 0 15px 40px rgba(0, 0, 0, 0.2);
+      --border-radius-sm: 0.5rem;
+      --border-radius-md: 1rem;
+      --border-radius-lg: 1.5rem;
+      --transition-speed: 0.3s ease-in-out;
+      --header-footer-bg: var(--primary-blue);
+      --header-shadow: 0 2px 10px rgba(0,0,0,0.1);
     }
+
+    html, body {
+      height: 100%;
+      margin: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--light-blue-gradient-start), var(--light-blue-gradient-end));
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .header {
+      background-color: var(--header-footer-bg);
+      color: var(--text-light);
+      padding: 1rem 0;
+      box-shadow: var(--header-shadow);
+      position: sticky;
+      top: 0;
+      z-index: 1020;
+    }
+
+    .header .navbar-brand {
+      display: flex;
+      align-items: center;
+      color: var(--text-light);
+      font-size: 1.75rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: color var(--transition-speed);
+    }
+
+    .header .navbar-brand:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .header .logo {
+      height: 35px;
+      margin-right: 12px;
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.3));
+    }
+
+    .main-content {
+      flex: 1;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
     h2 {
       font-weight: 700;
       letter-spacing: 0.5px;
-      margin-bottom: 2rem;
-      color: #212529;
+      margin-bottom: 1.5rem;
+      color: var(--primary-blue);
+      text-align: center;
     }
+
+    .best-result-card {
+      background-color: #e8f7ff;
+      border-left: 5px solid var(--primary-blue);
+      margin-bottom: 2rem;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-light);
+    }
+
+    .best-result-title {
+      color: var(--primary-blue);
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .best-result-badge {
+      background-color: #ffd700;
+      color: #000;
+      font-weight: bold;
+      padding: 0.25rem 0.75rem;
+      border-radius: 1rem;
+      display: inline-block;
+      margin-bottom: 0.5rem;
+    }
+
     .table-responsive {
       margin-bottom: 2rem;
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-      background: white;
-      padding: 1rem;
+      border-radius: var(--border-radius-md);
+      box-shadow: var(--shadow-light);
+      background: var(--card-bg);
+      overflow: hidden;
     }
-    table {
-      border-radius: 0.5rem;
-      border-collapse: separate !important;
-      border-spacing: 0 0.5rem;
-      font-weight: 600;
+
+    table.table-bordered {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border: 1px solid #e9ecef;
+      font-weight: 500;
       font-size: 0.95rem;
     }
-    thead th {
-      background-color: #0d6efd;
-      color: white;
+
+    table.table-bordered thead th {
+      background-color: var(--primary-blue);
+      color: var(--text-light);
       border: none !important;
-      padding: 12px 15px;
+      padding: 1rem 1.25rem;
+      text-align: center;
     }
-    tbody tr {
-      background-color: #f1f3f5;
+
+    table.table-bordered tbody tr {
+      background-color: var(--card-bg);
+      transition: background-color var(--transition-speed);
     }
-    tbody tr:hover {
-      background-color: #e9ecef;
+
+    table.table-bordered tbody tr:nth-child(even) {
+      background-color: var(--light-blue-gradient-start);
     }
-    tbody td {
-      padding: 10px 15px;
+
+    table.table-bordered tbody tr:hover {
+      background-color: var(--light-blue-gradient-end);
+    }
+
+    table.table-bordered tbody td {
+      padding: 0.8rem 1.25rem;
       vertical-align: middle;
+      border: 1px solid #e9ecef;
+      color: var(--text-dark);
     }
-    a.btn {
-      border-radius: 50px;
-      padding-left: 2.5rem;
-      padding-right: 2.5rem;
-      font-weight: 700;
-      font-size: 1rem;
-      box-shadow: 0 4px 8px rgba(13, 110, 253, 0.3);
+
+    table.table-bordered tbody td:first-child {
+      font-weight: 600;
+      color: var(--primary-blue);
+    }
+
+    .btn-primary {
+      background-color: var(--primary-blue);
+      border-color: var(--primary-blue);
+      border-radius: 2rem;
+      padding: 0.85rem 2.5rem;
+      font-size: 1.15rem;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(41, 171, 226, 0.2);
+      transition: all var(--transition-speed);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--dark-blue-gradient-end);
+      border-color: var(--dark-blue-gradient-end);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(41, 171, 226, 0.3);
+    }
+
+    .footer {
+      background-color: var(--header-footer-bg);
+      color: var(--text-light);
+      padding: 1rem 0;
+      text-align: center;
+      font-size: 0.85em;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      margin-top: auto;
+    }
+
+    .footer a {
+      color: var(--text-light);
+      text-decoration: none;
+      transition: text-decoration var(--transition-speed);
+    }
+
+    .footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      .header .navbar-brand {
+        font-size: 1.5rem;
+      }
+      .header .logo {
+        height: 30px;
+        margin-right: 8px;
+      }
+      .main-content {
+        padding-top: 1.5rem;
+        padding-bottom: 1.5rem;
+      }
+      h2 {
+        font-size: 1.75rem;
+      }
+      .table-responsive {
+        padding: 1rem;
+      }
+      table.table-bordered th, table.table-bordered td {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.85rem;
+      }
+      .btn-primary {
+        width: 100%;
+        border-radius: 0.75rem;
+        padding: 0.75rem 2rem;
+        font-size: 1.05rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h2>Hasil Perhitungan SPK</h2>
-    {% for table in tables %}
-      <div class="table-responsive">
-        {{ table|safe }}
+  <header class="header">
+    <div class="container d-flex justify-content-center align-items-center">
+      <a class="navbar-brand" href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='hospital_logo.png') }}" alt="Hospital Logo" class="logo">
+        Sistem SPK Rumah Sakit
+      </a>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="container">
+      <h2>Hasil Perhitungan SPK</h2>
+
+      <!-- Best Result Section -->
+      {% if tables %}
+        {% set results_html = tables[0] %}
+        {% set table_start = results_html.find('<tbody>') + 7 %}
+        {% set first_row_end = results_html.find('</tr>', table_start) + 5 %}
+        {% set first_row = results_html[table_start:first_row_end] %}
+
+        <div class="card best-result-card">
+          <div class="card-body">
+            <h3 class="best-result-title">
+              <span class="best-result-badge">REKOMENDASI TERBAIK</span><br>
+              🏆 Hasil Peringkat Pertama
+            </h3>
+            <div class="table-responsive">
+              <table class="table table-bordered">
+                <thead>
+                  <tr>
+                    <th>Nama Rumah Sakit</th>
+                    <th>PM Score</th>
+                    <th>TOPSIS Score</th>
+                    <th>Total Score</th>
+                    <th>Rank</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{ first_row|safe }}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      {% endif %}
+
+      <!-- Full Results Table -->
+      {% if tables %}
+        <h3>Seluruh Hasil Perankingan</h3>
+        <div class="table-responsive">
+          {{ tables[0]|safe }}
+        </div>
+      {% endif %}
+
+      <div class="d-flex justify-content-center">
+        <a href="/" class="btn btn-primary mt-3">Ulangi Perhitungan</a>
       </div>
-    {% endfor %}
-    <div class="d-flex justify-content-center">
-      <a href="/" class="btn btn-primary mt-3">Ulangi</a>
     </div>
   </div>
+
+  <footer class="footer">
+    <div class="container">
+      <span>&copy; 2025 Sistem SPK Rumah Sakit. Dibuat dengan &hearts; di Depok, Yogyakarta.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Selamat Datang di Sistem SPK Rumah Sakit</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-blue: #29abe2; /* A brighter, more modern blue */
+            --light-blue-gradient-start: #f0f8ff;
+            --light-blue-gradient-end: #e6f7ff;
+            --dark-blue-gradient-start: #1c86ba;
+            --dark-blue-gradient-end: #3eb4fa;
+            --success-green: #5cb85c; /* Standard Bootstrap success green */
+            --success-green-hover: #4cae4c;
+            --text-dark: #495057; /* Standard Bootstrap dark text */
+            --text-light: white;
+            --card-bg: #ffffff; /* Solid white for better contrast */
+            --shadow-light: 0 5px 20px rgba(0, 0, 0, 0.08);
+            --shadow-deep: 0 15px 40px rgba(0, 0, 0, 0.2);
+            --border-radius-lg: 1.5rem;
+            --transition-speed: 0.3s ease-in-out;
+            --header-footer-bg: var(--primary-blue);
+        }
+
+        body {
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, var(--dark-blue-gradient-start), var(--dark-blue-gradient-end));
+            color: var(--text-light);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .splash-container {
+            background-color: var(--card-bg); /* Solid white background */
+            padding: 50px 60px;
+            border-radius: var(--border-radius-lg);
+            box-shadow: var(--shadow-deep);
+            backdrop-filter: none; /* Remove blur for solid background */
+            -webkit-backdrop-filter: none;
+            animation: fadeInScale 1s var(--transition-speed) forwards;
+            opacity: 0;
+            transform: scale(0.95);
+            border: 1px solid rgba(0, 0, 0, 0.05); /* Subtle border */
+        }
+
+        .splash-logo {
+            width: 150px;
+            height: 150px;
+            margin-bottom: 25px;
+            animation: pulse 2s infinite ease-in-out;
+            border-radius: 15px; /* Slightly less round for a modern feel */
+            padding: 10px;
+            box-shadow: var(--shadow-light), 0 0 30px rgba(var(--primary-blue), 0.3);
+            background-color: rgba(255, 255, 255, 0.8); /* Optional: Background for the logo */
+        }
+
+        .splash-title {
+            font-size: 3.2em;
+            margin-bottom: 10px;
+            font-weight: 700;
+            letter-spacing: 1.2px;
+            color: var(--primary-blue); /* Use the brighter blue for the title */
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+            /* Removed text gradient for better contrast */
+        }
+
+        .splash-subtitle {
+            font-size: 1.5em;
+            margin-bottom: 40px;
+            opacity: 0.85;
+            line-height: 1.4;
+            max-width: 550px;
+            margin-left: auto;
+            margin-right: auto;
+            font-weight: 400;
+            color: var(--text-dark); /* Dark text on white background */
+        }
+
+        .splash-button {
+            background-color: var(--success-green);
+            color: var(--text-light);
+            padding: 15px 45px;
+            border: none;
+            border-radius: 0.75rem; /* Less rounded for a modern flat style */
+            font-size: 1.2em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+            box-shadow: var(--shadow-light), 0 4px 15px rgba(var(--success-green), 0.3);
+            letter-spacing: 0.3px;
+        }
+
+        .splash-button:hover {
+            background-color: var(--success-green-hover);
+            transform: translateY(-3px) scale(1.01);
+            box-shadow: var(--shadow-deep), 0 6px 20px rgba(var(--success-green), 0.4);
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+                box-shadow: var(--shadow-light), 0 0 30px rgba(var(--primary-blue), 0.3);
+            }
+            50% {
+                transform: scale(1.03);
+                box-shadow: var(--shadow-deep), 0 0 40px rgba(var(--primary-blue), 0.4);
+            }
+            100% {
+                transform: scale(1);
+                box-shadow: var(--shadow-light), 0 0 30px rgba(var(--primary-blue), 0.3);
+            }
+        }
+
+        @keyframes fadeInScale {
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Adjustments */
+        @media (max-width: 768px) {
+            .splash-container {
+                padding: 40px 30px;
+                border-radius: 1rem;
+            }
+            .splash-title {
+                font-size: 2.8em;
+            }
+            .splash-subtitle {
+                font-size: 1.3em;
+                margin-bottom: 30px;
+            }
+            .splash-logo {
+                width: 120px;
+                height: 120px;
+                border-radius: 10px;
+            }
+            .splash-button {
+                padding: 12px 30px;
+                font-size: 1.1em;
+                border-radius: 0.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="splash-container">
+        <img src="{{ url_for('static', filename='hospital_logo.png') }}" alt="Hospital Logo" class="splash-logo">
+        <div class="splash-title">SELAMAT DATANG</div>
+        <div class="splash-subtitle">Temukan prioritas terbaik untuk kebutuhan rumah sakit Anda dengan analisis sistem pendukung keputusan.</div>
+        <a href="{{ url_for('kriteria') }}" class="splash-button">Mulai Sekarang</a>
+    </div>
+</body>
+</html>

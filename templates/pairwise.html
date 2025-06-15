@@ -2,122 +2,704 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Pairwise Comparison</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Perbandingan Berpasangan - Sistem SPK Rumah Sakit</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
   <style>
+    :root {
+      /* Color palette - consistent with splash.html for branding */
+      --primary-blue: #29abe2;
+      --light-blue-gradient-start: #f0f8ff;
+      --light-blue-gradient-end: #e6f7ff;
+      --dark-blue-gradient-start: #1c86ba;
+      --dark-blue-gradient-end: #3eb4fa;
+      --success-green: #5cb85c;
+      --success-green-hover: #4cae4c;
+      --text-dark: #495057;
+      --text-light: white;
+      --card-bg: #ffffff;
+      --shadow-light: 0 5px 20px rgba(0, 0, 0, 0.08);
+      --shadow-deep: 0 15px 40px rgba(0, 0, 0, 0.2);
+      --border-radius-sm: 0.5rem;
+      --border-radius-md: 1rem;
+      --border-radius-lg: 1.5rem;
+      --transition-speed: 0.3s ease-in-out;
+
+      /* Specific for header/footer */
+      --header-footer-bg: var(--primary-blue);
+      --header-shadow: 0 2px 10px rgba(0,0,0,0.1);
+
+      /* Error specific colors */
+      --error-bg: #ffebeb;
+      --error-border: #ffcccb;
+      --error-text: #b00020;
+
+      /* Pairwise specific */
+      --input-active-bg: #e0f0ff; /* Light blue when editable */
+      --input-active-border: var(--primary-blue);
+      --saaty-scale-bg: #f8f9fa; /* Light background for Saaty scale reminder */
+      --saaty-scale-border: #e9ecef;
+      --highlight-input-border: #ffc107; /* Warning yellow for empty inputs */
+      --highlight-input-shadow: 0 0 0 0.2rem rgba(255, 193, 7, 0.25);
+    }
+
+    html, body {
+      height: 100%; /* Important for sticky footer */
+      margin: 0;
+    }
+
     body {
-      background-color: #f8f9fa;
+      font-family: 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: linear-gradient(135deg, var(--light-blue-gradient-start), var(--light-blue-gradient-end));
+      color: var(--text-dark);
+      display: flex;
+      flex-direction: column; /* Organize content vertically */
+      align-items: stretch; /* Stretch items to fill width */
     }
 
+    /* --- Header Styles --- */
+    .header {
+      background-color: var(--header-footer-bg);
+      color: var(--text-light);
+      padding: 1rem 0; /* Increased padding */
+      box-shadow: var(--header-shadow);
+      position: sticky; /* Make header sticky */
+      top: 0;
+      z-index: 1020; /* Ensure it stays above other content */
+    }
+
+    .header .navbar-brand {
+      display: flex;
+      align-items: center;
+      color: var(--text-light);
+      font-size: 1.75rem; /* Larger font size for brand */
+      font-weight: 700;
+      text-decoration: none;
+      transition: color var(--transition-speed);
+    }
+
+    .header .navbar-brand:hover {
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    .header .logo {
+      height: 35px; /* Slightly smaller logo in header */
+      margin-right: 12px; /* Space between logo and text */
+      filter: drop-shadow(0 0 5px rgba(255,255,255,0.3)); /* Subtle glow for logo */
+    }
+
+    /* --- Main Content Area --- */
+    .main-content {
+      flex: 1; /* Allows main content to take up available space, pushing footer down */
+      padding-top: 2rem; /* Padding for content below header */
+      padding-bottom: 2rem; /* Padding above footer */
+    }
+
+    .container {
+      width: 100%; /* Ensure container fills available width */
+      max-width: 960px; /* Max width for content readability */
+      margin-left: auto;
+      margin-right: auto;
+      padding-left: 15px;
+      padding-right: 15px;
+    }
+
+    h2 {
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 1.5rem;
+      color: var(--primary-blue);
+      text-align: center; /* Center the main heading */
+    }
+
+    /* --- Card & Table Styles --- */
     .card {
+      border-radius: var(--border-radius-md); /* Consistent border-radius */
+      box-shadow: var(--shadow-light); /* Lighter shadow for content cards */
       border: none;
-      border-radius: 1rem;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+      background-color: var(--card-bg);
+      overflow: hidden; /* Ensures border-radius applies to children, important for table */
     }
 
-    table {
-      table-layout: auto;
-      width: auto;
+    .card-body {
+      padding: 1.5rem;
     }
 
-    th, td {
+    .table-responsive {
+        margin-bottom: 0; /* Remove default margin from table-responsive */
+    }
+
+    .table {
+      width: 100%; /* Make table fill its container */
+      margin-bottom: 0; /* Remove default table margin */
+      border-collapse: separate; /* Required for border-radius on cells */
+      border-spacing: 0;
+      border: 1px solid #e0e0e0; /* Overall table border */
+      border-radius: var(--border-radius-sm); /* Apply border-radius to table itself */
+      overflow: hidden; /* Ensure rounded corners are visible */
+      table-layout: fixed; /* NEW: Fix table layout for consistent column widths */
+    }
+
+    .table th, .table td {
       text-align: center;
       vertical-align: middle;
-      padding: 0.5rem;
+      padding: 0.75rem; /* Slightly more padding */
+      border: 1px solid #e9ecef; /* Lighter cell borders */
+      font-size: 0.95rem;
+    }
+
+    .table thead th {
+      background-color: var(--light-blue-gradient-end); /* Header row background */
+      color: var(--primary-blue); /* Header text color */
+      font-weight: 600;
+      border-bottom: 2px solid var(--primary-blue); /* Stronger bottom border */
+      text-align: center; /* NEW: Center align header text */
+    }
+
+    .table tbody td {
+        background-color: var(--card-bg); /* White background for body cells */
     }
 
     th.name-col, td.name-col {
-      text-align: left;
+      text-align: left; /* Keep left alignment for name columns */
       white-space: nowrap;
       font-weight: bold;
+      background-color: var(--light-blue-gradient-start); /* Subtle background for row/column names */
+      color: var(--text-dark);
     }
+    th.name-col {
+        border-right: 2px solid var(--primary-blue); /* Stronger right border for header names */
+    }
+    td.name-col {
+        border-right: 1px solid #e0e0e0;
+    }
+
 
     input.form-control {
-      border-radius: 0.5rem;
-      height: auto;
-      font-weight: 600;
-      font-size: 1rem;
+      border-radius: var(--border-radius-sm);
+      height: 2.5rem; /* Slightly reduced height for table input */
+      font-weight: 500;
+      font-size: 0.95rem;
       padding: 0.5rem;
       text-align: center;
-      width: 100%; /* Agar input memenuhi sel */
-      min-width: 4rem;
+      width: 100%;
+      min-width: 4rem; /* Ensure a minimum width */
+      transition: border-color var(--transition-speed), box-shadow var(--transition-speed), background-color var(--transition-speed);
+      color: var(--text-dark);
     }
 
-    .step-header {
-      font-weight: 600;
-      margin-bottom: 1.5rem;
+    /* Specific styles for pairwise matrix inputs */
+    input.form-control:not([readonly]) { /* Target any input not readonly */
+        background-color: var(--input-active-bg); /* Light blue background for editable cells */
+        border-color: var(--primary-blue);
+    }
+    input.form-control:not([readonly]):focus {
+        background-color: white; /* White on focus */
+        border-color: var(--primary-blue);
+        box-shadow: 0 0 0 0.2rem rgba(var(--primary-blue-rgb), 0.3);
+    }
+    input.form-control[readonly] {
+        background-color: #f1f3f5; /* Grey background for readonly cells */
+        cursor: not-allowed;
+    }
+    /* Highlight for empty editable inputs */
+    input.form-control.empty-highlight:not([readonly]) {
+        border-color: var(--highlight-input-border);
+        box-shadow: var(--highlight-input-shadow);
+    }
+    /* Validation feedback for inputs */
+    input.form-control.is-invalid {
+        border-color: var(--error-border);
+        box-shadow: 0 0 0 0.2rem rgba(var(--error-text-rgb), 0.25);
+    }
+
+
+    /* --- Button Styles --- */
+    .btn-primary { /* Changed from btn-lg btn-primary rounded-pill px-5 */
+        background-color: var(--primary-blue);
+        border-color: var(--primary-blue);
+        border-radius: 2rem; /* Pill shape */
+        padding: 0.85rem 2.5rem; /* More padding for large button */
+        font-size: 1.15rem;
+        font-weight: 600;
+        box-shadow: 0 4px 15px rgba(var(--primary-blue-rgb), 0.2); /* Subtle blue shadow */
+        transition: background-color var(--transition-speed), transform var(--transition-speed), box-shadow var(--transition-speed);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--dark-blue-gradient-end); /* Slightly darker blue on hover */
+        border-color: var(--dark-blue-gradient-end);
+        transform: translateY(-2px); /* Slight lift on hover */
+        box-shadow: 0 6px 20px rgba(var(--primary-blue-rgb), 0.3);
+    }
+
+    /* --- Footer Styles --- */
+    .footer {
+        background-color: var(--header-footer-bg);
+        color: var(--text-light);
+        padding: 1rem 0;
+        text-align: center;
+        font-size: 0.85em;
+        box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        margin-top: auto;
+    }
+    .footer a {
+        color: var(--text-light);
+        text-decoration: none;
+        transition: text-decoration var(--transition-speed);
+    }
+    .footer a:hover {
+        text-decoration: underline;
+    }
+
+    /* Helper for RGB values for shadows */
+    body::before {
+      content: '';
+      display: none;
+      --primary-blue-rgb: 41, 171, 226;
+      --success-green-rgb: 92, 184, 92;
+      --error-text-rgb: 176, 0, 32; /* RGB for #b00020 */
+    }
+
+    /* Error specific colors */
+    --error-bg: #ffebeb;
+    --error-border: #ffcccb;
+    --error-text: #b00020;
+
+    /* Saaty Scale Reminder */
+    .saaty-scale-card {
+        background-color: var(--saaty-scale-bg);
+        border: 1px solid var(--saaty-scale-border);
+        border-radius: var(--border-radius-md);
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-light);
+    }
+    .saaty-scale-card h5 {
+        color: var(--primary-blue);
+        font-weight: 600;
+        margin-bottom: 1rem;
+    }
+    .saaty-scale-card ul {
+        list-style: none;
+        padding-left: 0;
+        columns: 2; /* Two columns for the list */
+        -webkit-columns: 2;
+        -moz-columns: 2;
+    }
+    .saaty-scale-card ul li {
+        margin-bottom: 0.5rem;
+        font-size: 0.9rem;
+    }
+    .saaty-scale-card ul li strong {
+        color: var(--text-dark);
+    }
+
+    /* Live Instruction Card - Hiding by default */
+    .instruction-card {
+        display: none; /* Hide by default */
+        background-color: #e0f7fa; /* Lighter blue */
+        border: 1px solid #b2ebf2;
+        border-radius: var(--border-radius-md);
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-light);
+        color: var(--text-dark);
+        font-weight: 500;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .instruction-card .icon {
+        font-size: 1.5rem;
+        color: var(--primary-blue);
+    }
+
+
+    /* Responsive adjustments */
+    @media (max-width: 768px) {
+        .header .navbar-brand {
+            font-size: 1.5rem;
+        }
+        .header .logo {
+            height: 30px;
+            margin-right: 8px;
+        }
+        .main-content {
+            padding-top: 1.5rem;
+            padding-bottom: 1.5rem;
+        }
+        h2 {
+            font-size: 1.75rem;
+        }
+        .table-responsive {
+            border-radius: var(--border-radius-sm); /* Ensure responsive table has rounded corners */
+        }
+        .table th, .table td {
+            padding: 0.6rem; /* Adjust padding for smaller screens */
+            font-size: 0.85rem;
+        }
+        th.name-col, td.name-col {
+            font-size: 0.9rem;
+        }
+        input.form-control, select.form-control { /* Adjusted for select on small screens too */
+            height: 2.2rem;
+            font-size: 0.85rem;
+        }
+        .btn-primary {
+            width: 100%;
+            border-radius: 0.75rem;
+            padding: 0.75rem 2rem;
+            font-size: 1.05rem;
+        }
+        .saaty-scale-card ul {
+            columns: 1; /* One column on small screens */
+            -webkit-columns: 1;
+            -moz-columns: 1;
+        }
     }
   </style>
 </head>
-<body class="py-5">
-  <div class="container">
-    <div class="card p-4 mb-5">
-      <h2 class="step-header">Pairwise Comparison Matrix</h2>
-      <form method="POST">
-        <div class="table-responsive">
-          <table class="table table-bordered">
-            <thead class="table-light">
-              <tr>
-                <th class="name-col"></th>
-                {% for c in criteria %}
-                  <th class="name-col">{{ c }}</th>
-                {% endfor %}
-              </tr>
-            </thead>
-            <tbody>
-              {% for i in range(criteria|length) %}
-              <tr>
-                <td class="name-col">{{ criteria[i] }}</td>
-                {% for j in range(criteria|length) %}
-                <td>
-                  {% if i == j %}
-                    <input
-                      name="pairwise_{{i}}_{{j}}"
-                      class="form-control"
-                      value="1"
-                      readonly
-                      data-i="{{i}}"
-                      data-j="{{j}}"
-                    />
-                  {% else %}
-                    <input
-                      name="pairwise_{{i}}_{{j}}"
-                      type="number"
-                      step="any"
-                      min="0.01"
-                      class="form-control"
-                      oninput="syncBoth(this)"
-                      data-i="{{i}}"
-                      data-j="{{j}}"
-                      placeholder="Nilai"
-                    />
-                  {% endif %}
-                </td>
-                {% endfor %}
-              </tr>
+<body>
+
+  <header class="header">
+    <div class="container d-flex justify-content-center align-items-center">
+      <a class="navbar-brand" href="{{ url_for('home') }}">
+        <img src="{{ url_for('static', filename='hospital_logo.png') }}" alt="Hospital Logo" class="logo">
+        Sistem SPK Rumah Sakit
+      </a>
+    </div>
+  </header>
+
+  <div class="main-content">
+    <div class="container">
+      {# Flash messages container #}
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          <div class="row">
+            <div class="col-12">
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                  {{ message }}
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
               {% endfor %}
-            </tbody>
-          </table>
-        </div>
-        <div class="text-end mt-4">
-          <button type="submit" class="btn btn-lg btn-primary rounded-pill px-5">Lanjut</button>
-        </div>
-      </form>
+            </div>
+          </div>
+        {% endif %}
+      {% endwith %}
+
+      <div class="card p-4 mb-5">
+        <h2>Perbandingan Berpasangan Kriteria</h2>
+        <form method="POST">
+          <div class="mb-4">
+
+              <p class="text-muted mb-3">
+                  Masukkan nilai yang menunjukkan seberapa penting Kriteria di baris terhadap Kriteria di kolom, menggunakan skala Saaty (1-9).
+              </p>
+
+              <div class="saaty-scale-card">
+                  <h5>Skala Perbandingan Saaty:</h5>
+                  <ul>
+                      <li><strong>1</strong> - Sama penting</li>
+                      <li><strong>3</strong> - Sedikit lebih penting</li>
+                      <li><strong>5</strong> - Jauh lebih penting</li>
+                      <li><strong>7</strong> - Sangat jauh lebih penting</li>
+                      <li><strong>9</strong> - Ekstrem/mutlak lebih penting</li>
+                      <li><strong>2,4,6,8</strong> - Nilai tengah antara dua skala yang berdekatan</li>
+                      <li><strong>Resiprokal (1/N)</strong> - Jika Kriteria A lebih penting dari B dengan nilai N, maka B lebih penting dari A dengan nilai 1/N.</li>
+                  </ul>
+              </div>
+          </div>
+
+          <div class="table-responsive">
+            <table class="table table-bordered" id="pairwiseTable">
+              <thead class="table-light">
+                <tr>
+                  <th class="name-col" style="width: 15%;"></th> {# Adjusted width for first column #}
+                  {% for c in criteria %}
+                    <th class="name-col" style="width: calc((85% / {{ criteria|length }}));">{{ c }}</th> {# Distribute remaining width #}
+                  {% endfor %}
+                </tr>
+              </thead>
+              <tbody>
+                {% for i in range(criteria|length) %}
+                <tr>
+                  <td class="name-col">{{ criteria[i] }}</td>
+                  {% for j in range(criteria|length) %}
+                  <td>
+                    {% if i == j %}
+                      {# Diagonal input, always 1, readonly #}
+                      <input
+                        name="pairwise_{{i}}_{{j}}"
+                        class="form-control"
+                        value="1"
+                        readonly
+                        data-i="{{i}}"
+                        data-j="{{j}}"
+                      />
+                    {% else %}
+                      {# Editable input: now a text input #}
+                      <input
+                        name="pairwise_{{i}}_{{j}}"
+                        type="text" {# Changed to type="text" #}
+                        class="form-control editable-input"
+                        oninput="validateAndSync(this)" {# New validation function #}
+                        data-i="{{i}}"
+                        data-j="{{j}}"
+                        placeholder="Nilai (1-9 atau 1/N)"
+                      />
+                    {% endif %}
+                  </td>
+                  {% endfor %}
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+          <div class="text-end mt-4">
+            <button type="submit" class="btn btn-primary" id="submitButton">Lanjut</button>
+          </div>
+        </form>
+      </div>
     </div>
   </div>
 
+  <footer class="footer">
+    <div class="container">
+      <span>&copy; 2025 Sistem SPK Rumah Sakit. Dibuat dengan &hearts; di Depok, Yogyakarta.</span>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  {# Removed xlsx.full.min.js and papaparse.min.js as they are no longer needed #}
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+
   <script>
-    function syncBoth(input) {
-      const i = input.getAttribute('data-i');
-      const j = input.getAttribute('data-j');
-      const val = parseFloat(input.value);
-      const reverse = document.querySelector(`input[data-i="${j}"][data-j="${i}"]`);
-      if (!isNaN(val) && val !== 0 && reverse) {
-        reverse.value = (1 / val).toFixed(5);
-      } else if (reverse) {
-        reverse.value = '';
-      }
+    // Removed pairwiseFileUpload and fileValidationMessage as file upload is removed
+    // const pairwiseFileUpload = document.getElementById('pairwiseFileUpload');
+    // const fileValidationMessage = document.getElementById('fileValidationMessage');
+    const pairwiseTable = document.getElementById('pairwiseTable');
+    const submitButton = document.getElementById('submitButton');
+    // Removed liveInstructionCard and instructionText as the dynamic instruction is being removed
+    // const liveInstructionCard = document.getElementById('liveInstructionCard');
+    // const instructionText = document.getElementById('instructionText');
+
+
+    const criteriaNames = {{ criteria|tojson|safe }};
+    const N = criteriaNames.length;
+
+    // This function is no longer needed as there's no SaatyNumericMap used directly for value interpretation
+    // function getSaatyLabel(value) { /* ... */ }
+
+    // Validation and sync function
+    function validateAndSync(input) {
+        const i = parseInt(input.getAttribute('data-i'));
+        const j = parseInt(input.getAttribute('data-j'));
+        const rawValue = input.value.trim();
+        const reverseInput = document.querySelector(`input[data-i="${j}"][data-j="${i}"]`);
+
+        // Remove previous invalid state
+        input.classList.remove('is-invalid');
+        if (reverseInput) reverseInput.classList.remove('is-invalid');
+        input.classList.remove('empty-highlight'); // Also remove empty highlight on user input
+        if (reverseInput) reverseInput.classList.remove('empty-highlight');
+
+        let isValid = false;
+        let numericValue = NaN;
+
+        if (rawValue !== '') { // Only validate if input is not empty
+            let evaluatedValue;
+            try {
+                if (rawValue.includes('/')) {
+                    // Prevents division by zero or non-numeric denominators
+                    const parts = rawValue.split('/');
+                    if (parts.length === 2) {
+                        const num = parseFloat(parts[0]);
+                        const den = parseFloat(parts[1]);
+                        if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                            evaluatedValue = num / den;
+                        } else {
+                            evaluatedValue = NaN;
+                        }
+                    } else {
+                        evaluatedValue = NaN; // Malformed fraction (e.g. "1/2/3")
+                    }
+                } else {
+                    evaluatedValue = parseFloat(rawValue);
+                }
+            } catch (e) {
+                evaluatedValue = NaN; // Catches issues like "abc"
+            }
+
+            if (!isNaN(evaluatedValue) && evaluatedValue > 0) {
+                // Define a small epsilon for floating-point comparisons
+                // Toleransi lebih besar untuk input user (misalnya, 0.3333 untuk 1/3)
+                const epsilonForValidation = 0.0005; // Set to 0.0005 for more tolerance for common decimal approximations
+
+                // Check if the value is a direct Saaty integer (1-9)
+                const isDirectSaatyInteger = evaluatedValue >= 1 && evaluatedValue <= 9 && Math.abs(evaluatedValue - Math.round(evaluatedValue)) < epsilonForValidation;
+
+                // Check if the value is a Saaty reciprocal (1/N where N is 1-9 integer)
+                const reciprocalOfEvaluatedValue = 1 / evaluatedValue;
+                const isSaatyReciprocal = evaluatedValue > 0 && evaluatedValue < 1 && // Must be between 0 and 1
+                                          Math.abs(reciprocalOfEvaluatedValue - Math.round(reciprocalOfEvaluatedValue)) < epsilonForValidation &&
+                                          Math.round(reciprocalOfEvaluatedValue) >= 1 && Math.round(reciprocalOfEvaluatedValue) <= 9;
+
+                if (isDirectSaatyInteger || isSaatyReciprocal) {
+                    isValid = true;
+                    numericValue = evaluatedValue;
+                }
+            }
+        } else {
+            isValid = true; // Empty is valid for initial state, handled by submit validation
+        }
+
+
+        if (isValid && rawValue !== '') { // If valid and not empty, set value and sync reciprocal
+            input.value = numericValue; // Normalize value (e.g. 1/3 might become 0.33333)
+            if (reverseInput) {
+                reverseInput.value = (1 / numericValue).toFixed(5);
+            }
+        } else if (!isValid && rawValue !== '') { // If not valid and not empty, mark as invalid
+            input.classList.add('is-invalid');
+            if (reverseInput) reverseInput.classList.add('is-invalid');
+        } else if (rawValue === '') { // If empty, clear reverse
+            if (reverseInput) reverseInput.value = '';
+        }
+
+        // Always enable submit button if input is being used (even if invalid, validation happens on submit)
+        enableSubmitButton();
     }
+
+
+    // Function to display messages (now targets the general flash message container)
+    function displayMessage(message, type) {
+        const flashContainer = document.querySelector('.main-content .container .row');
+        if (flashContainer) {
+            flashContainer.innerHTML = `
+                <div class="col-12">
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+        }
+    }
+
+    // Function to enable submit button (renamed from clearFileUploadAndEnableSubmit)
+    function enableSubmitButton() {
+        submitButton.disabled = false;
+    }
+
+    // Add event listeners to manual input fields to enable submit
+    pairwiseTable.addEventListener('input', (event) => {
+        if (event.target.tagName === 'INPUT' && event.target.type === 'text' && event.target.classList.contains('editable-input')) {
+            enableSubmitButton();
+        }
+    });
+
+    // This function is now simpler, only highlighting inputs
+    function updateInstructionsAndHighlightNext() {
+        // Remove existing highlights
+        document.querySelectorAll('.empty-highlight').forEach(el => el.classList.remove('empty-highlight'));
+        document.querySelectorAll('.is-invalid').forEach(el => el.classList.remove('is-invalid')); // Also clear invalid highlights
+
+        const nextInput = getNextEmptyInput();
+        if (nextInput) {
+            nextInput.classList.add('empty-highlight');
+            const reciprocalInput = document.querySelector(`input[data-i="${nextInput.getAttribute('data-j')}"][data-j="${nextInput.getAttribute('data-i')}"]`);
+            if (reciprocalInput) {
+                reciprocalInput.classList.add('empty-highlight');
+            }
+        }
+    }
+
+
+    // Initial check for submit button state (if criteria exist)
+    if (N === 0) {
+        submitButton.disabled = true;
+        // Display a message if no criteria were loaded (this case should ideally be caught by Flask redirect)
+        displayMessage('Tidak ada kriteria yang ditemukan. Harap definisikan kriteria terlebih dahulu di halaman sebelumnya.', 'danger');
+    } else {
+        submitButton.disabled = false;
+        updateInstructionsAndHighlightNext(); // Initial call to set instructions and highlight
+    }
+
+    // Add submit form validation for empty and invalid fields
+    document.querySelector('form').addEventListener('submit', (event) => {
+        let hasError = false;
+        const allEditableInputs = document.querySelectorAll('input.editable-input');
+
+        // Clear previous highlights and invalid states
+        allEditableInputs.forEach(input => {
+            input.classList.remove('empty-highlight');
+            input.classList.remove('is-invalid');
+        });
+
+
+        // 1. Check for empty fields
+        const emptyInputs = Array.from(allEditableInputs).filter(input => input.value.trim() === '');
+        if (emptyInputs.length > 0) {
+            hasError = true;
+            displayMessage('Ada sel perbandingan yang belum diisi. Harap lengkapi semua perbandingan.', 'danger');
+            emptyInputs.forEach(input => input.classList.add('empty-highlight'));
+            if (emptyInputs[0]) emptyInputs[0].scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+
+        // 2. Check for invalid values
+        allEditableInputs.forEach(input => {
+            const val = input.value.trim();
+            if (val === '') return; // Already handled by empty check
+
+            let numericVal;
+            try {
+                if (val.includes('/')) {
+                    const parts = val.split('/');
+                    if (parts.length === 2) {
+                        const num = parseFloat(parts[0]);
+                        const den = parseFloat(parts[1]);
+                        if (!isNaN(num) && !isNaN(den) && den !== 0) {
+                            numericVal = num / den;
+                        } else {
+                            numericVal = NaN; // Malformed fraction
+                        }
+                    } else {
+                        numericVal = NaN; // Malformed fraction (e.g. "1/2/3")
+                    }
+                } else {
+                    numericVal = parseFloat(val);
+                }
+            } catch (e) {
+                numericVal = NaN; // Catches issues like "abc"
+            }
+
+            // Define a small epsilon for floating-point comparisons
+            const epsilonForSubmit = 1e-9; // Strict tolerance for final submit validation
+
+            // Validation rules: must be a number, > 0, and a Saaty scale value (1-9 or its reciprocal)
+            const isDirectSaatyInteger = numericVal >= 1 && numericVal <= 9 && Math.abs(numericVal - Math.round(numericVal)) < epsilonForSubmit;
+            const reciprocalOfNumericValue = 1 / numericVal;
+            const isSaatyReciprocal = numericVal > 0 && numericVal < 1 &&
+                                      Math.abs(reciprocalOfNumericValue - Math.round(reciprocalOfNumericValue)) < epsilonForSubmit &&
+                                      Math.round(reciprocalOfNumericValue) >= 1 && Math.round(reciprocalOfNumericValue) <= 9;
+
+            if (isNaN(numericVal) || !(isDirectSaatyInteger || isSaatyReciprocal)) {
+                input.classList.add('is-invalid');
+                hasError = true;
+                const existingAlert = document.querySelector('.alert.alert-danger');
+                if (!existingAlert || !existingAlert.textContent.includes('nilai yang tidak valid')) {
+                    displayMessage('Ada nilai yang tidak valid. Harap gunakan angka Saaty (1-9) atau resiprokalnya (1/N), seperti 1/3 atau 0.25.', 'danger');
+                }
+            }
+        });
+
+
+        if (hasError) {
+            event.preventDefault(); // Stop form submission
+        }
+    });
+
   </script>
 </body>
 </html>
